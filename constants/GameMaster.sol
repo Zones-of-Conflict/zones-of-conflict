@@ -76,16 +76,17 @@ contract GameMaster {
         //banner
     }
 
-    mapping(address => Account) addressToAccount;
-    mapping(uint256 => Match) gameIdToMatch;
+    mapping(address => Account) public addressToAccount;
+    mapping(uint256 => Match) public gameIdToMatch;
 
-    function matchFactory() public {
+    function matchFactory() public returns (uint256) {
         //initialize new match and empty grid
         Match memory newMatch;
         uint256[][] memory newGrid;
+        uint256 matchId = matchCount;
 
         //add defualt values to newMatch
-        newMatch.id = matchCount;
+        newMatch.id = matchId;
         newMatch.playerA = msg.sender;
         newMatch.state = GameState.queued;
         newMatch.grid = newGrid;
@@ -93,6 +94,7 @@ contract GameMaster {
 
         //increment matchCounter
         matchCount++;
+        return matchId;
     }
 
     function joinMatch(uint256 matchId) public {

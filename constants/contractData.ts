@@ -78,7 +78,13 @@ const GAMEMASTER_ABI = [
 	{
 		"inputs": [],
 		"name": "matchFactory",
-		"outputs": [],
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
 		"stateMutability": "nonpayable",
 		"type": "function"
 	},
@@ -111,7 +117,7 @@ const GAMEMASTER_ABI = [
 export type Contract = { address: string; abi: any; chainId: number };
 
 export const GAMEMASTER_DATA = {
-	testnetAddress: "0x6C3C27Bbe1fa369bc52214d5783d727E36fbBA9F",
+	testnetAddress: "0xE3438D6A71f6387e2b4Ef0D2d68a9420aeAbA970",
 	
 	abi: GAMEMASTER_ABI,
 }
