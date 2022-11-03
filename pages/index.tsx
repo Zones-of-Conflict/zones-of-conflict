@@ -1,4 +1,4 @@
-import { Typography, Box } from "@mui/material";
+import { Typography, Box, Button } from "@mui/material";
 import Image from "next/image";
 import Head from "next/head";
 import Navbar from "../components/Navbar";
@@ -12,17 +12,22 @@ export default function Home() {
   const { data: signer } = useSigner();
 
   //contract instance for reading data
-  const { GAMEMASTER_READ } = useContract({
+  const GAMEMASTER_READ = useContract({
     address: GAMEMASTER_DATA.testnetAddress,
     abi: GAMEMASTER_DATA.abi,
     signerOrProvider: provider,
   });
+
   //contract instance for writing data
-  const { GAMEMASTER_WRITE } = useContract({
+  const GAMEMASTER_WRITE = useContract({
     address: GAMEMASTER_DATA.testnetAddress,
     abi: GAMEMASTER_DATA.abi,
     signerOrProvider: signer,
   });
+
+  const startMatch = () => {
+    GAMEMASTER_WRITE?.matchFactory();
+  };
 
   return (
     <>
@@ -52,6 +57,9 @@ export default function Home() {
           <Image src={"/tank512.png"} alt={"beige tank"} width={500} height={500} />
 
           <Faucet />
+          <Button onClick={() => startMatch()} variant={"contained"}>
+            Start a Match
+          </Button>
         </Box>
       </Box>
       {/* Main page container End */}

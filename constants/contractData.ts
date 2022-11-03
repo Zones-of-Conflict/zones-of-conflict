@@ -2,6 +2,56 @@ const GAMEMASTER_ABI = [
 	{
 		"inputs": [
 			{
+				"internalType": "uint256",
+				"name": "matchId",
+				"type": "uint256"
+			}
+		],
+		"name": "joinMatch",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "matchFactory",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "unitOneId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "unitTwoId",
+				"type": "uint256"
+			}
+		],
+		"name": "resolveBattle",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
 				"internalType": "address",
 				"name": "",
 				"type": "address"
@@ -60,56 +110,6 @@ const GAMEMASTER_ABI = [
 			}
 		],
 		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "matchId",
-				"type": "uint256"
-			}
-		],
-		"name": "joinMatch",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "matchFactory",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "unitOneId",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "unitTwoId",
-				"type": "uint256"
-			}
-		],
-		"name": "resolveBattle",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "winnerId",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "nonpayable",
 		"type": "function"
 	}
 ]
