@@ -102,9 +102,12 @@ contract GameMaster {
 
     //todo calculate battleLogic
     function resolveBattle(uint256 unitOneId, uint256 unitTwoId)
-        private
+        public
         returns (uint256 winnerId)
     {
+        //battle logic needed here
+        //destroy losing force, reward exp to wiinning unit
+        //returns winner
         return unitOneId;
     }
 
