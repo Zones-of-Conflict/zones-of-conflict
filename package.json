@@ -14,9 +14,12 @@
     "@fontsource/roboto": "^4.5.8",
     "@mui/icons-material": "^5.10.9",
     "@mui/material": "^5.10.12",
+    "@rainbow-me/rainbowkit": "^0.7.4",
+    "ethers": "^5.7.2",
     "next": "13.0.0",
     "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "react-dom": "18.2.0",
+    "wagmi": "^0.7.10"
   },
   "devDependencies": {
     "@types/node": "18.11.9",
