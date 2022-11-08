@@ -1,6 +1,6 @@
 {
 	"compiler": {
-		"version": "0.8.6+commit.11564f7e"
+		"version": "0.8.7+commit.e28d00a7"
 	},
 	"language": "Solidity",
 	"output": {
@@ -26,9 +26,9 @@
 						"type": "uint8"
 					},
 					{
-						"internalType": "uint256",
+						"internalType": "uint16",
 						"name": "experience",
-						"type": "uint256"
+						"type": "uint16"
 					}
 				],
 				"stateMutability": "view",
@@ -45,9 +45,9 @@
 				"name": "gameIdToMatch",
 				"outputs": [
 					{
-						"internalType": "uint256",
+						"internalType": "uint32",
 						"name": "id",
-						"type": "uint256"
+						"type": "uint32"
 					},
 					{
 						"internalType": "address",
@@ -60,8 +60,8 @@
 						"type": "address"
 					},
 					{
-						"internalType": "enum GameMaster.GameState",
-						"name": "state",
+						"internalType": "enum GameMaster.GameStatus",
+						"name": "status",
 						"type": "uint8"
 					}
 				],
@@ -134,7 +134,7 @@
 		"compilationTarget": {
 			"GameMaster.sol": "GameMaster"
 		},
-		"evmVersion": "berlin",
+		"evmVersion": "london",
 		"libraries": {},
 		"metadata": {
 			"bytecodeHash": "ipfs"
@@ -147,11 +147,11 @@
 	},
 	"sources": {
 		"GameMaster.sol": {
-			"keccak256": "0x8c9400af84f56321f0adc45f5eac47bb3e1a5247ade1a4152cb44dd8c49a4e91",
+			"keccak256": "0x12cc76c178ceed8f0575354f09f763adfc1b0dca4032779cc9c163dbf6499c1b",
 			"license": "GPL-3.0",
 			"urls": [
-				"bzz-raw://7f0bc8882ee0fcec4ba01c5a70b77e31ff382414666b6c2f051cde781ac471d0",
-				"dweb:/ipfs/Qmc52zLhBg9Pi8i1LEyCvAhQE62N65WpejR9H4mwihpcQx"
+				"bzz-raw://64cde9cf172690016246ae350aabdbb24133248c8dfd25a48def4ebc36e5e46a",
+				"dweb:/ipfs/QmRk2WiMuxbAwzUY7SRPVVaBeUzpdzsgnk53x4AWUR5Y4y"
 			]
 		}
 	},
