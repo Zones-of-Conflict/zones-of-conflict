@@ -1,0 +1,159 @@
+{
+	"compiler": {
+		"version": "0.8.6+commit.11564f7e"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"name": "addressToAccount",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "owner",
+						"type": "address"
+					},
+					{
+						"internalType": "enum GameMaster.Rank",
+						"name": "rank",
+						"type": "uint8"
+					},
+					{
+						"internalType": "uint256",
+						"name": "experience",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "gameIdToMatch",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "id",
+						"type": "uint256"
+					},
+					{
+						"internalType": "address",
+						"name": "playerA",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "playerB",
+						"type": "address"
+					},
+					{
+						"internalType": "enum GameMaster.GameState",
+						"name": "state",
+						"type": "uint8"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "matchId",
+						"type": "uint256"
+					}
+				],
+				"name": "joinMatch",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "matchFactory",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "unitOneId",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "unitTwoId",
+						"type": "uint256"
+					}
+				],
+				"name": "resolveBattle",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "winnerId",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"GameMaster.sol": "GameMaster"
+		},
+		"evmVersion": "berlin",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": false,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"GameMaster.sol": {
+			"keccak256": "0x8c9400af84f56321f0adc45f5eac47bb3e1a5247ade1a4152cb44dd8c49a4e91",
+			"license": "GPL-3.0",
+			"urls": [
+				"bzz-raw://7f0bc8882ee0fcec4ba01c5a70b77e31ff382414666b6c2f051cde781ac471d0",
+				"dweb:/ipfs/Qmc52zLhBg9Pi8i1LEyCvAhQE62N65WpejR9H4mwihpcQx"
+			]
+		}
+	},
+	"version": 1
+}

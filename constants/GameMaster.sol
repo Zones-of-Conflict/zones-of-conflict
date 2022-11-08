@@ -3,7 +3,7 @@
 pragma solidity >=0.7.0 <0.9.0;
 
 contract GameMaster {
-    enum GameState {
+    enum GameStatus {
         inactive,
         queued,
         active,
@@ -20,16 +20,7 @@ contract GameMaster {
         Sergeant,
         Lieutenant,
         Captain
-        // Major,
-        // Colonel,
-        // General
     }
-
-    // enum Terrain {
-    //     flat,
-    //     mountain,
-    //     building
-    // }
 
     enum ActionState {
         idle,
@@ -44,24 +35,23 @@ contract GameMaster {
     uint256 private matchCount = 0;
 
     struct Match {
-        uint256 id;
+        uint32 id;
         address playerA;
         address playerB;
-        GameState state;
-        uint256[][] grid;
+        GameStatus status;
+        uint16[][] grid;
+        //  gamegrid
+        //  empty:0 infantry:11 tank:12 drone:13   //fogofwar //
+        //  UserB: infantry:21 tank:22 drone:23
     }
-    //  gamegrid
-    //  empty:0 infantry:11 tank:12 drone:13   //fogofwar //
-    //  UserB: infantry:21 tank:22 drone:23
 
     struct Unit {
-        uint256 unitId;
+        uint16 unitId;
         UnitType unitType;
-        uint256 hp;
-        uint256 attack;
-        uint256 armor;
+        uint16 hp;
+        uint16 attack;
+        uint16 armor;
         ActionState currentAction;
-
         //uint256 attackRange;
         //uint256 ammunition;
         //uint256 range;
@@ -69,11 +59,11 @@ contract GameMaster {
     }
 
     struct Account {
+        //banner
         address owner;
         Rank rank;
-        uint256 experience;
+        uint16 experience;
         Unit[] Army;
-        //banner
     }
 
     mapping(address => Account) public addressToAccount;
@@ -82,13 +72,13 @@ contract GameMaster {
     function matchFactory() public returns (uint256) {
         //initialize new match and empty grid
         Match memory newMatch;
-        uint256[][] memory newGrid;
+        uint16[][] memory newGrid;
         uint256 matchId = matchCount;
 
         //add defualt values to newMatch
-        newMatch.id = matchId;
+        newMatch.id = uint32(matchId);
         newMatch.playerA = msg.sender;
-        newMatch.state = GameState.queued;
+        newMatch.status = GameStatus.queued;
         newMatch.grid = newGrid;
         gameIdToMatch[matchCount] = newMatch;
 
@@ -99,7 +89,7 @@ contract GameMaster {
 
     function joinMatch(uint256 matchId) public {
         gameIdToMatch[matchId].playerB = msg.sender;
-        gameIdToMatch[matchId].state = GameState.active;
+        gameIdToMatch[matchId].status = GameStatus.active;
     }
 
     //todo calculate battleLogic
@@ -112,9 +102,4 @@ contract GameMaster {
         //returns winner
         return unitOneId;
     }
-
-    /**
-     * @dev Store value in variable
-     * @param num value to store
-     */
 }
