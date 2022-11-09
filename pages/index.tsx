@@ -6,6 +6,8 @@ import Faucet from "../components/Faucet";
 import { GAMEMASTER_DATA } from "../constants/contractData";
 import { useProvider, useSigner, useContract } from "wagmi";
 
+import Router from "next/router";
+
 export default function Home() {
   //get provider and signer using wagmi hooks
   const provider = useProvider();
@@ -25,8 +27,20 @@ export default function Home() {
     signerOrProvider: signer,
   });
 
-  const startMatch = () => {
-    GAMEMASTER_WRITE?.matchFactory();
+  const startMatch = async () => {
+    try {
+      const result = await GAMEMASTER_WRITE?.matchFactory();
+      console.log(result.hash);
+      if (result) {
+        console.log("hey");
+        const { pathname } = Router;
+        if (pathname == "/") {
+          Router.push("/canvas");
+        }
+      }
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   return (
@@ -53,10 +67,14 @@ export default function Home() {
 
         <Box display={"flex"} flexDirection={"column"} alignItems={"center"}>
           <Typography variant="h1">Zones of Conflict</Typography>
-
-          <Image src={"/tank512.png"} alt={"beige tank"} width={500} height={500} />
-
+          <Image
+            src={"/tank512.png"}
+            alt={"beige tank"}
+            width={500}
+            height={500}
+          />
           <Faucet />
+
           <Button onClick={() => startMatch()} variant={"contained"}>
             Start a Match
           </Button>
