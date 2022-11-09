@@ -1,4 +1,4 @@
-import { Typography, Box, Button } from "@mui/material";
+import { Typography, Box, Button, TextField } from "@mui/material";
 import Image from "next/image";
 import Head from "next/head";
 import Navbar from "../components/Navbar";
@@ -28,6 +28,9 @@ export default function Home() {
   const startMatch = () => {
     GAMEMASTER_WRITE?.matchFactory();
   };
+  const joinmatch = (_matchId) => {
+    GAMEMASTER_WRITE?.joinMatch(_matchId);
+  };
 
   return (
     <>
@@ -56,10 +59,20 @@ export default function Home() {
 
           <Image src={"/tank512.png"} alt={"beige tank"} width={500} height={500} />
 
-          <Faucet />
-          <Button onClick={() => startMatch()} variant={"contained"}>
-            Start a Match
-          </Button>
+          <Box display={"flex"} flexDirection={"row"} gap={5}>
+            <Button onClick={() => startMatch()} variant={"contained"}>
+              Start a Match
+            </Button>
+            <form>
+              <TextField></TextField>
+              <Button onClick={() => joinmatch()} variant={"contained"}>
+                Join a Match
+              </Button>
+            </form>
+          </Box>
+          <Box m={10}>
+            <Faucet />
+          </Box>
         </Box>
       </Box>
       {/* Main page container End */}
