@@ -1,9 +1,9 @@
 import { Typography, Box, Button, TextField } from "@mui/material";
 import Image from "next/image";
 import Head from "next/head";
-import Navbar from "../components/Navbar";
-import Faucet from "../components/Faucet";
-import { GAMEMASTER_DATA } from "../constants/contractData";
+import Navbar from "../src/components/Navbar";
+import Faucet from "../src/components/Faucet";
+import { GAMEMASTER_DATA } from "../src/constants/contractData";
 import { useProvider, useSigner, useContract } from "wagmi";
 
 export default function Home() {
