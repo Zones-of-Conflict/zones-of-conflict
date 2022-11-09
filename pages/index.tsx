@@ -5,6 +5,8 @@ import Navbar from "../src/components/Navbar";
 import Faucet from "../src/components/Faucet";
 import { GAMEMASTER_DATA } from "../src/constants/contractData";
 import { useProvider, useSigner, useContract } from "wagmi";
+import GameMenu from "../src/components/StartMenu";
+import { MainContext } from "../src/contexts/MainContext";
 
 export default function Home() {
   //get provider and signer using wagmi hooks
@@ -32,8 +34,15 @@ export default function Home() {
     GAMEMASTER_WRITE?.joinMatch(_matchId);
   };
 
+  const mainContext = {
+    GAMEMASTER_READ,
+    GAMEMASTER_WRITE,
+    startMatch,
+    joinmatch,
+  };
+
   return (
-    <>
+    <MainContext.Provider value={mainContext}>
       <Head>
         <title>Zones of Conflict</title>
         <meta name="description" content="Built for NEAR Hackathon!" />
@@ -48,34 +57,16 @@ export default function Home() {
         minHeight={"100vh"}
         gap={5}
       >
-        {/* Navbar Container */}
-        <Box bgcolor={"grey.100"} alignItems={"right"}>
-          <Navbar />
-        </Box>
-        {/* Navbar Container End */}
+        <Navbar />
 
         <Box display={"flex"} flexDirection={"column"} alignItems={"center"}>
           <Typography variant="h1">Zones of Conflict</Typography>
-
           <Image src={"/tank512.png"} alt={"beige tank"} width={500} height={500} />
-
-          <Box display={"flex"} flexDirection={"row"} gap={5}>
-            <Button onClick={() => startMatch()} variant={"contained"}>
-              Start a Match
-            </Button>
-            <form>
-              <TextField></TextField>
-              <Button onClick={() => joinmatch()} variant={"contained"}>
-                Join a Match
-              </Button>
-            </form>
-          </Box>
-          <Box m={10}>
-            <Faucet />
-          </Box>
+          <GameMenu />
+          <Faucet />
         </Box>
       </Box>
       {/* Main page container End */}
-    </>
+    </MainContext.Provider>
   );
 }
