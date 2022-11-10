@@ -31,6 +31,7 @@ const CanvasImp = (props) => {
     ctx.fillRect(leftX, topY, width, height);
     ctx.stroke();
   };
+
   useEffect(() => {
     const canvas = canvasRef.current;
     const context = canvas.getContext("2d");
@@ -44,6 +45,7 @@ const CanvasImp = (props) => {
 
     //draw clicked corrdinate
     draw(context, coordinates);
+    drawRect(context, coordinates.x, coordinates.y, 40, 40, "red");
     context.fillText("here", coordinates.x, coordinates.y);
 
     //Our draw came here
