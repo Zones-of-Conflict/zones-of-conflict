@@ -8,6 +8,8 @@ import { useProvider, useSigner, useContract } from "wagmi";
 import GameMenu from "../src/components/StartMenu";
 import { MainContext } from "../src/contexts/MainContext";
 
+import Router from "next/router";
+
 export default function Home() {
   //get provider and signer using wagmi hooks
   const provider = useProvider();
@@ -27,9 +29,22 @@ export default function Home() {
     signerOrProvider: signer,
   });
 
-  const startMatch = () => {
-    GAMEMASTER_WRITE?.matchFactory();
+  const startMatch = async () => {
+    try {
+      const result = await GAMEMASTER_WRITE?.matchFactory();
+      console.log(result.hash);
+      if (result) {
+        console.log("hey");
+        const { pathname } = Router;
+        if (pathname == "/") {
+          Router.push("/canvas");
+        }
+      }
+    } catch (e) {
+      console.log(e);
+    }
   };
+
   const joinmatch = (_matchId) => {
     GAMEMASTER_WRITE?.joinMatch(_matchId);
   };
@@ -40,7 +55,6 @@ export default function Home() {
     startMatch,
     joinmatch,
   };
-
   return (
     <MainContext.Provider value={mainContext}>
       <Head>
