@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import CanvasImp from "../components/CanvasImp";
+import CanvasImp from "../src/components/CanvasImp";
 // import { useCanvas } from "../hooks/useCanvas";
 const Canvas = () => {
   const [coordinates, setCoordinates] = useState({ x: 0, y: 0 });

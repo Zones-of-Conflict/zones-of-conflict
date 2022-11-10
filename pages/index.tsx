@@ -1,10 +1,12 @@
-import { Typography, Box, Button } from "@mui/material";
+import { Typography, Box, Button, TextField } from "@mui/material";
 import Image from "next/image";
 import Head from "next/head";
-import Navbar from "../components/Navbar";
-import Faucet from "../components/Faucet";
-import { GAMEMASTER_DATA } from "../constants/contractData";
+import Navbar from "../src/components/Navbar";
+import Faucet from "../src/components/Faucet";
+import { GAMEMASTER_DATA } from "../src/constants/contractData";
 import { useProvider, useSigner, useContract } from "wagmi";
+import GameMenu from "../src/components/StartMenu";
+import { MainContext } from "../src/contexts/MainContext";
 
 import Router from "next/router";
 
@@ -42,9 +44,18 @@ export default function Home() {
       console.log(e);
     }
   };
+  const joinmatch = (_matchId) => {
+    GAMEMASTER_WRITE?.joinMatch(_matchId);
+  };
 
+  const mainContext = {
+    GAMEMASTER_READ,
+    GAMEMASTER_WRITE,
+    startMatch,
+    joinmatch,
+  };
   return (
-    <>
+    <MainContext.Provider value={mainContext}>
       <Head>
         <title>Zones of Conflict</title>
         <meta name="description" content="Built for NEAR Hackathon!" />
@@ -59,11 +70,7 @@ export default function Home() {
         minHeight={"100vh"}
         gap={5}
       >
-        {/* Navbar Container */}
-        <Box bgcolor={"grey.100"} alignItems={"right"}>
-          <Navbar />
-        </Box>
-        {/* Navbar Container End */}
+        <Navbar />
 
         <Box display={"flex"} flexDirection={"column"} alignItems={"center"}>
           <Typography variant="h1">Zones of Conflict</Typography>
@@ -73,14 +80,11 @@ export default function Home() {
             width={500}
             height={500}
           />
+          <GameMenu />
           <Faucet />
-
-          <Button onClick={() => startMatch()} variant={"contained"}>
-            Start a Match
-          </Button>
         </Box>
       </Box>
       {/* Main page container End */}
-    </>
+    </MainContext.Provider>
   );
 }
