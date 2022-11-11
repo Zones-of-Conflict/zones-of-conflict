@@ -11,13 +11,18 @@ const CanvasImp = (props) => {
     // ctx.arc(50, 100, 20 * Math.sin(frameCount * 0.05) ** 2, 0, 2 * Math.PI);
     // ctx.fill();
   };
+  function getBaseContext(canvas) {
+    const context = canvas.getContext("2d");
+
+    return context;
+  }
   // grid of the canvas
   const drawGrid = (ctx, xLength, xStep, yLength, yStep) => {
-    for (var x = 0; x <= xLength; x += xStep) {
+    for (var x = 0.5; x <= xLength; x += xStep) {
       ctx.moveTo(x, 0);
       ctx.lineTo(x, xLength);
     }
-    for (var y = 0; y <= yLength; y += yStep) {
+    for (var y = 0.5; y <= yLength; y += yStep) {
       ctx.moveTo(0, y);
       ctx.lineTo(yLength, y);
     }
@@ -32,21 +37,32 @@ const CanvasImp = (props) => {
     ctx.stroke();
   };
 
+  // draw image
+  const drawImage = (ctx, src, px, py) => {
+    let image = new Image();
+    image.src = src;
+
+    ctx.drawImage(image, 0, 0, ctx.width, ctx.height);
+  };
+
   useEffect(() => {
     const canvas = canvasRef.current;
-    const context = canvas.getContext("2d");
+    //const context = canvas.getContext("2d");
+    const context = getBaseContext(canvas);
     // change width and height to our boundries
-    canvas.width = "1200";
+    canvas.width = "600";
     canvas.height = "600";
-
+    const image1 = new Image();
+    const image = new Image();
     let frameCount = 0;
     let animationFrameId;
+
     context.clearRect(0, 0, canvas.width, canvas.height);
 
     //draw clicked corrdinate
     draw(context, coordinates);
-    drawRect(context, coordinates.x, coordinates.y, 40, 40, "red");
-    context.fillText("here", coordinates.x, coordinates.y);
+    drawRect(context, coordinates.x - 250, coordinates.y - 87, 40, 40, "red");
+    context.fillText("here", coordinates.x - 250, coordinates.y - 87);
 
     //Our draw came here
     const render = () => {
@@ -57,8 +73,17 @@ const CanvasImp = (props) => {
       context.strokeStyle = "#000000";
 
       context.strokeRect(0, 0, canvas.width, canvas.height);
-      drawGrid(context, 1200, 100, 1200, 100);
+      drawGrid(context, 600, 60, 600, 60);
       drawRect(context, 100, 100, 50, 50, "red");
+
+      image.src = "/tankred.png";
+      context.drawImage(image, 0, 0);
+      image1.src = "/tankblue.png";
+      context.drawImage(image1, 240, 240);
+      context.drawImage(image1, 240, 240);
+      // if we want to use a function
+      // drawImage(context, "/tankred.png", 240, 240);
+
       animationFrameId = window.requestAnimationFrame(render);
     };
     render();
