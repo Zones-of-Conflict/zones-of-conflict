@@ -5,7 +5,7 @@ import CanvasImp from "../src/components/CanvasImp";
 import Navbar from "../src/components/Navbar";
 
 const Canvas = () => {
-  const [coordinates, setCoordinates] = useState([]);
+  const [coordinates, setCoordinates] = useState({});
   const [selectedItem, setSelectedItem] = useState(null);
 
   useEffect(() => {
@@ -14,15 +14,11 @@ const Canvas = () => {
   }, []);
 
   const handleCanvasClick = (event) => {
-    const currentCoord = { x: event.clientX, y: event.clientY };
-    console.log(event.clientX);
-    console.log(event.clientY);
-
-    var x = event.clientX - event.target.offsetLeft;
-    var y = event.clientY - event.target.offsetTop;
-    var coords = "X coordinates: " + x + ", Y coordinates: " + y;
-    console.log(coords);
-    setCoordinates([currentCoord]);
+    const currentCoord = {
+      x: event.clientX - event.target.offsetLeft,
+      y: event.clientY - event.target.offsetTop,
+    };
+    setCoordinates(currentCoord);
   };
 
   return (
