@@ -1,38 +1,35 @@
 import { Box, Typography, Card, CardContent, CardMedia } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import CanvasImp from "../src/components/CanvasImp";
 
 import Navbar from "../src/components/Navbar";
 
 const Canvas = () => {
-  const [coordinates, setCoordinates] = useState({ x: 0, y: 0 });
+  const [coordinates, setCoordinates] = useState([]);
+  const [selectedItem, setSelectedItem] = useState(null);
 
-  const showCoords = (event) => {
+  useEffect(() => {
+    console.log("width: " + window.innerWidth);
+    console.log("height: " + window.innerHeight);
+  }, []);
+
+  const handleCanvasClick = (event) => {
     const currentCoord = { x: event.clientX, y: event.clientY };
     console.log(event.clientX);
     console.log(event.clientY);
-    var x = event.clientX - 250;
-    var y = event.clientY - 87;
+
+    var x = event.clientX - event.target.offsetLeft;
+    var y = event.clientY - event.target.offsetTop;
     var coords = "X coordinates: " + x + ", Y coordinates: " + y;
     console.log(coords);
-    setCoordinates(currentCoord);
+    setCoordinates([currentCoord]);
   };
+
   return (
-    <Box
-      display={"flex"}
-      flexDirection={"column"}
-      bgcolor={"grey.100"}
-      minHeight={"100vh"}
-      gap={5}
-    >
+    <Box display={"flex"} flexDirection={"column"} bgcolor={"grey.100"} minHeight={"100vh"} gap={5}>
       <Navbar />
 
-      <Box
-        display={"flex"}
-        flexDirection={"column"}
-        alignItems={"center"}
-        gap={4}
-      >
+      <Box display={"flex"} flexDirection={"column"} alignItems={"center"} gap={4}>
         <Typography variant="h1">Battle Map</Typography>
         <Box sx={{ display: "flex", flexDirection: "row" }}>
           <Box sx={{ display: "flex", flexDirection: "column", p: 4 }}>
@@ -60,7 +57,7 @@ const Canvas = () => {
               </CardContent>
             </Card>
           </Box>
-          <CanvasImp onClick={showCoords} coordinates={coordinates} />
+          <CanvasImp onClick={handleCanvasClick} coordinates={coordinates} />
           <Box sx={{ display: "flex", flexDirection: "column", p: 4 }}>
             <Card
               sx={{
