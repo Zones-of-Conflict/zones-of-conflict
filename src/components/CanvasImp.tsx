@@ -4,6 +4,7 @@ const CanvasImp = (props) => {
   const canvasRef = useRef(null);
   let { coordinates } = props;
   console.log(coordinates);
+  // const [selectedGrid, useSelectedGrid]=
   const draw = (ctx, frameCount) => {
     // ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
     // ctx.fillStyle = "#000000";
@@ -11,6 +12,7 @@ const CanvasImp = (props) => {
     // ctx.arc(50, 100, 20 * Math.sin(frameCount * 0.05) ** 2, 0, 2 * Math.PI);
     // ctx.fill();
   };
+
   function getBaseContext(canvas) {
     const context = canvas.getContext("2d");
 
@@ -82,6 +84,10 @@ const CanvasImp = (props) => {
       context.drawImage(image1, 240, 240);
       context.drawImage(image1, 240, 240);
       // if we want to use a function
+      // image.onclick(() => {
+      //   console.log("clicked");
+      //   return "3";
+      // });
       // drawImage(context, "/tankred.png", 240, 240);
 
       animationFrameId = window.requestAnimationFrame(render);

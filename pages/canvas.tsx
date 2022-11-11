@@ -1,12 +1,79 @@
-import { Box, Typography, Card, CardContent, CardMedia } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import CanvasImp from "../src/components/CanvasImp";
 
 import Navbar from "../src/components/Navbar";
+import CardPlayer from "../src/components/CardPlayer";
+// use effect to get player info
+// when new player join call the same function
+// add the player 2 to array of player
+// will we have a name for each player or only his address
 
+// 2
+// function to getthe related unit for the player
 const Canvas = () => {
   const [coordinates, setCoordinates] = useState({});
   const [selectedItem, setSelectedItem] = useState(null);
+  const players = [
+    {
+      id: 1,
+      radius: 40,
+      src: "/tankred.png",
+      rank: "Sergeant",
+      units: [
+        {
+          unitId: 1,
+          unitType: "tank1",
+          unitPositionX: 200,
+          unitPositionY: 300,
+          src: "/tankred.png",
+        },
+        {
+          unitId: 2,
+          unitType: "tank2",
+          unitPositionX: 100,
+          unitPositionY: 300,
+          src: "/tankred.png",
+        },
+        {
+          unitId: 1,
+          unitType: "tank3",
+          unitPositionX: 300,
+          unitPositionY: 300,
+          src: "/tankred.png",
+        },
+      ],
+    },
+    {
+      id: 2,
+      radius: 40,
+      src: "tankblue.png",
+      rank: "Sergeant",
+      units: [
+        {
+          unitId: 1,
+          unitType: "tank1",
+          unitPositionX: 200,
+          unitPositionY: 300,
+          src: "/tankblue.png",
+        },
+        {
+          unitId: 2,
+          unitType: "tank2",
+          unitPositionX: 100,
+          unitPositionY: 300,
+          src: "/tankblue.png",
+        },
+        {
+          unitId: 1,
+          unitType: "tank3",
+          unitPositionX: 300,
+          unitPositionY: 300,
+          src: "/tankblue.png",
+        },
+      ],
+    },
+  ];
 
   useEffect(() => {
     console.log("width: " + window.innerWidth);
@@ -22,62 +89,39 @@ const Canvas = () => {
   };
 
   return (
-    <Box display={"flex"} flexDirection={"column"} bgcolor={"grey.100"} minHeight={"100vh"} gap={5}>
+    <Box
+      display={"flex"}
+      flexDirection={"column"}
+      bgcolor={"grey.100"}
+      minHeight={"100vh"}
+      gap={5}
+    >
       <Navbar />
 
-      <Box display={"flex"} flexDirection={"column"} alignItems={"center"} gap={4}>
+      <Box
+        display={"flex"}
+        flexDirection={"column"}
+        alignItems={"center"}
+        gap={4}
+      >
         <Typography variant="h1">Battle Map</Typography>
         <Box sx={{ display: "flex", flexDirection: "row" }}>
           <Box sx={{ display: "flex", flexDirection: "column", p: 4 }}>
-            <Card
-              sx={{
-                width: 250,
-                boxShadow: "0 5px 8px 0 rgba(0, 0, 0, 0.3)",
-                backgroundColor: "#fafafa",
-              }}
-            >
-              <CardMedia sx={{ height: 200 }} image={"/tankred.png"} />
-              <CardContent sx={{ textAlign: "center" }}>
-                <Typography color="primary" variant="h5">
-                  Player A
-                </Typography>
-                <Typography color="textSecondary" variant="subtitle2">
-                  unit 1
-                </Typography>
-                <Typography color="textSecondary" variant="subtitle2">
-                  unit 2
-                </Typography>
-                <Typography color="textSecondary" variant="subtitle2">
-                  unit 3
-                </Typography>
-              </CardContent>
-            </Card>
+            <CardPlayer
+              id={players[0].id}
+              src={players[0].src}
+              rank={players[0].rank}
+              units={players[0].units}
+            />
           </Box>
           <CanvasImp onClick={handleCanvasClick} coordinates={coordinates} />
           <Box sx={{ display: "flex", flexDirection: "column", p: 4 }}>
-            <Card
-              sx={{
-                width: 250,
-                boxShadow: "0 5px 8px 0 rgba(0, 0, 0, 0.3)",
-                backgroundColor: "#fafafa",
-              }}
-            >
-              <CardMedia sx={{ height: 200 }} image={"/tankred.png"} />
-              <CardContent sx={{ textAlign: "center" }}>
-                <Typography color="primary" variant="h5">
-                  Player B
-                </Typography>
-                <Typography color="textSecondary" variant="subtitle2">
-                  unit 1
-                </Typography>
-                <Typography color="textSecondary" variant="subtitle2">
-                  unit 2
-                </Typography>
-                <Typography color="textSecondary" variant="subtitle2">
-                  unit 3
-                </Typography>
-              </CardContent>
-            </Card>
+            <CardPlayer
+              id={players[1].id}
+              src={players[1].src}
+              rank={players[1].rank}
+              units={players[1].units}
+            />
           </Box>
         </Box>
       </Box>
