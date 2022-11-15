@@ -1,10 +1,13 @@
 import { Box, Typography } from "@mui/material";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 // import CanvasImp from "../src/components/CanvasImp";
 
 import Navbar from "../src/components/Navbar";
 import CardPlayer from "../src/components/CardPlayer";
 import { formatUnits } from "ethers/lib/utils";
+import { MainContext } from "../src/contexts/MainContext";
+import { GAMEMASTER_DATA } from "../src/constants/contractData";
+import { useContract, useProvider } from "wagmi";
 // use effect to get player info
 // when new player join call the same function
 // add the player 2 to array of player
@@ -224,7 +227,27 @@ const Canvas = () => {
   // later use the player id to get the units
   const [isMoving, setIsMoving] = useState(false);
   const canvasRef = useRef(null);
+  const [testUnit, setTestUnit] = useState();
+  //contract instance for reading data
+  const provider = useProvider();
+  const GAMEMASTER_READ = useContract({
+    address: GAMEMASTER_DATA.testnetAddress,
+    abi: GAMEMASTER_DATA.abi,
+    signerOrProvider: provider,
+  });
 
+  useEffect(() => {
+    async function fetchTestunit() {
+      const unit = await GAMEMASTER_READ.testUnit();
+      setTestUnit(unit);
+    }
+    GAMEMASTER_READ && fetchTestunit();
+  }, [GAMEMASTER_READ]);
+
+  useEffect(() => {
+    console.log("testUnit", testUnit);
+    console.log("normnalized TargetX", Number(testUnit.targetX));
+  }, [testUnit]);
   // useEffect(() => {
   //   console.log("width: " + window.innerWidth);
   //   console.log("height: " + window.innerHeight);
@@ -309,21 +332,10 @@ const Canvas = () => {
   };
 
   return (
-    <Box
-      display={"flex"}
-      flexDirection={"column"}
-      bgcolor={"grey.100"}
-      minHeight={"100vh"}
-      gap={5}
-    >
+    <Box display={"flex"} flexDirection={"column"} bgcolor={"grey.100"} minHeight={"100vh"} gap={5}>
       <Navbar />
 
-      <Box
-        display={"flex"}
-        flexDirection={"column"}
-        alignItems={"center"}
-        gap={4}
-      >
+      <Box display={"flex"} flexDirection={"column"} alignItems={"center"} gap={4}>
         <Typography variant="h1">Battle Map</Typography>
         <Box sx={{ display: "flex", flexDirection: "row" }}>
           <Box sx={{ display: "flex", flexDirection: "column", p: 4 }}>
