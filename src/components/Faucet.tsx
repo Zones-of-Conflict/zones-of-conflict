@@ -15,7 +15,8 @@ export default function Faucet() {
         flexDirection={"column"}
         alignItems="center"
         gap={4}
-        p={5}
+        p={2}
+        m={5}
         pt={2}
         boxShadow={"0px 4px 12px rgba(0, 0, 0, 0.1)"}
         position={"relative"}
@@ -45,6 +46,7 @@ export default function Faucet() {
         flexDirection={"column"}
         alignItems="center"
         p={2}
+        m={5}
         pl={5}
         pr={5}
         boxShadow={"0px 4px 12px rgba(0, 0, 0, 0.1)"}

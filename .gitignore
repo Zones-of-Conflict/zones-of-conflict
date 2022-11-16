@@ -37,3 +37,4 @@ next-env.d.ts
 
 ./constants/.deps
 ./constants/artifacts
+package-lock.json
