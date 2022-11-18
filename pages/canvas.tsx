@@ -432,7 +432,7 @@ const Canvas = () => {
               width: "100%",
               height: "100%",
               backgroundPosition: "top left",
-              backgroundRepeat: " no-repeat",
+              backgroundRepeat: "no-repeat",
               backgroundSize: "100% 100%",
             }}
           />
