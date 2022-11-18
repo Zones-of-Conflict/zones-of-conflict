@@ -1,4 +1,4 @@
-import { Box, Typography } from "@mui/material";
+import { Box, Typography, Button } from "@mui/material";
 import React, { useContext, useEffect, useRef, useState } from "react";
 // import CanvasImp from "../src/components/CanvasImp";
 
@@ -8,6 +8,7 @@ import { formatUnits } from "ethers/lib/utils";
 import { MainContext } from "../src/contexts/MainContext";
 import { GAMEMASTER_DATA } from "../src/constants/contractData";
 import { useContract, useProvider } from "wagmi";
+import ukraine from "../src/assets/ukraine.jpg";
 // use effect to get player info
 // when new player join call the same function
 // add the player 2 to array of player
@@ -23,7 +24,7 @@ const players = [
   {
     id: 1,
     radius: 40,
-    src: "/tankred.png",
+    src: "/player.png",
     rank: "Sergeant",
     units: [
       {
@@ -31,28 +32,28 @@ const players = [
         unitType: "tank1",
         unitPositionX: 200,
         unitPositionY: 300,
-        src: "/tankred.png",
+        src: "/tank1.png",
       },
       {
         unitId: 2,
         unitType: "tank2",
         unitPositionX: 100,
         unitPositionY: 300,
-        src: "/tankred.png",
+        src: "/tank1.png",
       },
       {
         unitId: 3,
         unitType: "tank3",
         unitPositionX: 300,
         unitPositionY: 300,
-        src: "/tankred.png",
+        src: "/tank1.png",
       },
     ],
   },
   {
     id: 2,
     radius: 40,
-    src: "tankblue.png",
+    src: "player1.png",
     rank: "Sergeant",
     units: [
       {
@@ -60,21 +61,21 @@ const players = [
         unitType: "tank1",
         unitPositionX: 200,
         unitPositionY: 300,
-        src: "/tankblue.png",
+        src: "/tank2.png",
       },
       {
         unitId: 2,
         unitType: "tank2",
         unitPositionX: 100,
         unitPositionY: 300,
-        src: "/tankblue.png",
+        src: "/tank2.png",
       },
       {
         unitId: 3,
         unitType: "tank3",
         unitPositionX: 300,
         unitPositionY: 300,
-        src: "/tankblue.png",
+        src: "/tank2.png",
       },
     ],
   },
@@ -88,7 +89,7 @@ const units = [
     unitType: "tank1",
     unitPositionX: 240,
     unitPositionY: 240,
-    src: "/tankblue.png",
+    src: "/tank1.png",
     radius: 60,
   },
   {
@@ -96,7 +97,7 @@ const units = [
     unitType: "tank2",
     unitPositionX: 30,
     unitPositionY: 170,
-    src: "/tankred.png",
+    src: "/tank1.png",
     radius: 120,
   },
   {
@@ -104,15 +105,15 @@ const units = [
     unitType: "tank3",
     unitPositionX: 300,
     unitPositionY: 300,
-    src: "/tankblue.png",
+    src: "/tank1.png",
     radius: 180,
   },
   {
     unitId: 4,
     unitType: "tank3",
     unitPositionX: 600,
-    unitPositionY: 600,
-    src: "/tankblue.png",
+    unitPositionY: 300,
+    src: "/tank2.png",
     radius: 240,
   },
 ];
@@ -167,11 +168,11 @@ const isIntersectPoint = (point, unit) => {
 };
 
 // draw rect with color
-const drawRect = (ctx, leftX, topY, width, height, drawColor) => {
-  ctx.fillStyle = drawColor;
-  ctx.fillRect(leftX, topY, width, height);
-  ctx.stroke();
-};
+// const drawRect = (ctx, leftX, topY, width, height, drawColor) => {
+//   ctx.fillStyle = drawColor;
+//   ctx.fillRect(leftX, topY, width, height);
+//   ctx.stroke();
+// };
 // function to draw the units
 const drawUnits = (ctx, units) => {
   // draw the units
@@ -217,6 +218,20 @@ const isUnitAllowedToMoveToNewPosition = (unit, newPosition) => {
   return allowed;
 };
 
+// draw circle
+const drawCircle = (ctx, unit, radius, drawColor) => {
+  console.log("unit", unit.unitPositionX);
+  ctx.beginPath();
+  ctx.setLineDash([]);
+  let x = unit.unitPositionX + 30;
+  let y = unit.unitPositionY + 30;
+  ctx.arc(x, y, radius, 0, 2 * Math.PI);
+  ctx.lineWidth = 2;
+  ctx.strokeStyle = "#003300";
+  ctx.stroke();
+  ctx.closePath();
+};
+
 const Canvas = () => {
   const [player, setPlayer] = useState(players[0]);
   const [coordinates, setCoordinates] = useState({});
@@ -228,6 +243,7 @@ const Canvas = () => {
   const [isMoving, setIsMoving] = useState(false);
   const canvasRef = useRef(null);
   const [testUnit, setTestUnit] = useState();
+  const [isPlayingSound, setIsPlayingSound] = useState(false);
   //contract instance for reading data
   const provider = useProvider();
   const GAMEMASTER_READ = useContract({
@@ -246,7 +262,7 @@ const Canvas = () => {
 
   useEffect(() => {
     console.log("testUnit", testUnit);
-    console.log("normnalized TargetX", Number(testUnit.targetX));
+    //  console.log("normnalized TargetX", Number(testUnit.targetX));
   }, [testUnit]);
   // useEffect(() => {
   //   console.log("width: " + window.innerWidth);
@@ -262,25 +278,37 @@ const Canvas = () => {
     canvas.width = "600";
     canvas.height = "600";
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+
     //Our draw came here
     const render = () => {
       // draw grid
       drawGrid(ctx, 600, 60, 600, 60);
-      drawRect(ctx, 100, 100, 50, 50, "red");
+      //  drawRect(ctx, 100, 100, 50, 50, "red");
       drawUnits(ctx, units);
     };
     render();
     // draw the line
     ctx.beginPath();
-    ctx.moveTo(start.x, start.y);
-    ctx.lineTo(end.x, end.y);
+    ctx.setLineDash([5, 15]);
+
     if (selectedItem) {
+      drawCircle(ctx, selectedItem, 30, "red");
+      let x = selectedItem.unitPositionX + 30;
+      let y = selectedItem.unitPositionY + 30;
+      ctx.moveTo(x, y);
+      ctx.lineTo(end.x, end.y);
       let isAllowed = isUnitAllowedToMoveToNewPosition(selectedItem, end);
       console.log("isAllowed", isAllowed);
       if (isAllowed) {
+        ctx.strokeStyle = "green";
         ctx.closePath();
         ctx.stroke();
         moveUnitToNewPosition(ctx, selectedItem, end);
+        setIsDrawing(false);
+      } else {
+        ctx.strokeStyle = "red";
+        ctx.closePath();
+        ctx.stroke();
       }
     }
   }, [isDrawing, start, end, selectedItem]);
@@ -305,8 +333,20 @@ const Canvas = () => {
       console.log("x", unit.unitPositionX);
       console.log("y", event.target.offsetLeft);
       if (isIntersectPoint(currentCoord, unit)) {
-        alert("click on unit: " + unit.unitId);
+        // alert("click on unit: " + unit.unitId);
+        console.log("click on unit: " + unit.unitId);
+
         setSelectedItem(unit);
+        // TOASK: why is this not working? setSelected take time to fill the state
+        // I want to draw the circle only when the unit is selected
+        // drawCircle(ctx, unit, unit.radius, "red");
+
+        // draw the line
+        setStart({
+          x: unit.unitPositionX + 30,
+          y: unit.unitPositionY + 30,
+        });
+        //  drawCircle(canvasRef.current.getContext("2d"), selectedItem, 30, "red");
       }
     });
   };
@@ -330,13 +370,40 @@ const Canvas = () => {
     placeAtGrid(unit);
     drawSelectedUnit(ctx, unit);
   };
-
+  // play sound
+  const playSound = () => {
+    let audio = new Audio("/start.mp3");
+    if (isPlayingSound == false) {
+      console.log("play sound");
+      audio.play();
+      setIsPlayingSound(true);
+    } else {
+      audio.pause();
+      console.log("stop sound");
+      setIsPlayingSound(false);
+    }
+  };
   return (
-    <Box display={"flex"} flexDirection={"column"} bgcolor={"grey.100"} minHeight={"100vh"} gap={5}>
+    <Box
+      display={"flex"}
+      flexDirection={"column"}
+      bgcolor={"grey.100"}
+      minHeight={"100vh"}
+      gap={5}
+    >
       <Navbar />
 
-      <Box display={"flex"} flexDirection={"column"} alignItems={"center"} gap={4}>
+      <Box
+        display={"flex"}
+        flexDirection={"column"}
+        alignItems={"center"}
+        gap={4}
+      >
         <Typography variant="h1">Battle Map</Typography>
+        <Button variant="contained" color="primary" onClick={playSound}>
+          {" "}
+          Play | Pause{" "}
+        </Button>
         <Box sx={{ display: "flex", flexDirection: "row" }}>
           <Box sx={{ display: "flex", flexDirection: "column", p: 4 }}>
             <CardPlayer
@@ -359,7 +426,15 @@ const Canvas = () => {
             onClick={handleCanvasClick}
             width="600"
             height="600"
-            style={{ border: "1px solid #ccc" }}
+            style={{
+              border: "1px solid #ccc",
+              backgroundImage: `url(${ukraine.src})`,
+              width: "100%",
+              height: "100%",
+              backgroundPosition: "top left",
+              backgroundRepeat: " no-repeat",
+              backgroundSize: "100% 100%",
+            }}
           />
           <Box sx={{ display: "flex", flexDirection: "column", p: 4 }}>
             <CardPlayer

@@ -23,7 +23,7 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx"
-  ],
+, "src/components/MusicPlayer.jsx"  ],
   "exclude": [
     "node_modules"
   ]

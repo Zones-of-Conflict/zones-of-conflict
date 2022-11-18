@@ -7,7 +7,6 @@ import { GAMEMASTER_DATA } from "../src/constants/contractData";
 import { useProvider, useSigner, useContract } from "wagmi";
 import GameMenu from "../src/components/StartMenu";
 import { MainContext } from "../src/contexts/MainContext";
-
 import Router from "next/router";
 
 export default function Home() {
@@ -75,7 +74,12 @@ export default function Home() {
 
         <Box display={"flex"} flexDirection={"column"} alignItems={"center"}>
           <Typography variant="h1">Zones of Conflict</Typography>
-          <Image src={"/tank512.png"} alt={"beige tank"} width={500} height={500} />
+          <Image
+            src={"/tank512.png"}
+            alt={"beige tank"}
+            width={500}
+            height={500}
+          />
           <GameMenu />
           <Faucet />
         </Box>
