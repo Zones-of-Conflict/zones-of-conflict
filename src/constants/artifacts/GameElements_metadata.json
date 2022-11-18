@@ -1,0 +1,53 @@
+{
+	"compiler": {
+		"version": "0.8.13+commit.abaa5c0e"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"src/constants/GameElements.sol": "GameElements"
+		},
+		"evmVersion": "london",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": false,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"src/constants/GameElements.sol": {
+			"keccak256": "0x02228a89294a814f2b051a3bdbe34881154a189caaeb92b816d97a1132ed9b6c",
+			"license": "GPL-3.0",
+			"urls": [
+				"bzz-raw://8475a206a0fc9feef703adf33318445278715c30f6fb8fae2e85f57aca062c8e",
+				"dweb:/ipfs/QmNbUXBZNXUu8Wyrd8ZVqiBoSpMAHNRPVWZcw45NJTWo4e"
+			]
+		},
+		"src/constants/StepTimer.sol": {
+			"keccak256": "0xa6bcc13152d937abea1257bea35b484662bae7735c8dc4bbabdea8e5ddfbbab1",
+			"license": "GPL-3.0",
+			"urls": [
+				"bzz-raw://d74065e2db121767146f45269b83071a6bf52a58ace0bb012bda16d7675880e1",
+				"dweb:/ipfs/QmdKnof1LFSwkSw8Tw2PKqhPsmwKrZ2E9DgUkZnPNYzfMM"
+			]
+		}
+	},
+	"version": 1
+}

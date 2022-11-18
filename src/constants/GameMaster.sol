@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0
 
-pragma solidity 0.8.3;
+pragma solidity 0.8.17;
 import "./GameElements.sol";
 import "./StepTimer.sol";
 
@@ -11,9 +11,9 @@ contract GameMaster is GameElements {
 
     mapping(address => Player) internal addressToPlayer;
     mapping(uint256 => Match) internal matchIdToMatch;
-    mapping(address => mapping(uint256 => Unit)) internal ownerToIdToUnit;
     mapping(uint256 => Unit) internal unitIdToUnit;
-    Player tempPlayer;
+    Player internal tempPlayer;
+    Unit   internal tempUnit;
 
     ///////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////
@@ -21,12 +21,18 @@ contract GameMaster is GameElements {
     ///////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////
 
-    function listUnits() public view returns (Unit[] memory armyList) {
+    event displayArmy(Unit[]);
+    event displayPlayer(Player);
+
+    function listUnits() public returns (Unit[] memory ) {
+        require(addressToPlayer[msg.sender].unitCount != 0, "You have no Troops");
         Player memory player = addressToPlayer[msg.sender];
-        // Unit[] memory army_list = new Unit[](army_size);
-        for (uint256 i = 0; i < tempPlayer.unitCount; i++) {
-            armyList[i] = ownerToIdToUnit[msg.sender][player.ownedUnitId[i]];
+        emit displayPlayer(player);
+        Unit[] memory armyList = new Unit[](player.unitCount);
+        for (uint256 i = 0; i < player.unitCount-1; i++) {
+            armyList[i] = unitIdToUnit[player.ownedUnitId[i]];
         }
+        emit displayArmy(armyList);
         return armyList;
     }
 
@@ -37,7 +43,6 @@ contract GameMaster is GameElements {
         uint256 _armor
     ) public returns (Unit memory newUnit) {
         newUnit = createNewUnit(
-            unitGlobalId,
             msg.sender,
             _unitType,
             ActionState.idle,
@@ -66,61 +71,94 @@ contract GameMaster is GameElements {
         public
         returns (Player memory)
     {
-        Player storage newPlayer = tempPlayer;
-        newPlayer.owner = _owner;
-        newPlayer.rank = _rank;
-        addressToPlayer[_owner] = newPlayer;
+        addressToPlayer[_owner].owner = _owner;
+        addressToPlayer[_owner].rank = _rank;
+        return addressToPlayer[_owner];
+    }
 
-        return newPlayer;
+    function returnPlayer() public view returns (Player memory) {
+          return addressToPlayer[msg.sender];
     }
 
     function assignUnitToPlayer(address playerOwner, uint256 _unitGlobalId)
         public
     {
-        require(_unitGlobalId == unitGlobalId);
         addressToPlayer[playerOwner].ownedUnitId.push(_unitGlobalId);
-        addressToPlayer[playerOwner].unitCount++;
+        addressToPlayer[playerOwner].unitCount = addressToPlayer[playerOwner].unitCount + 1;
     }
 
+    event displayNewUnit(Unit );
+    event displayUint(uint);
     function createNewUnit(
-        uint256 _uniqueGlobalId,
-        address _owner,
-        UnitTypes _unitType,
-        ActionState _currentAction,
-        uint256 _hp,
-        uint256 _attack,
-        uint256 _armor,
-        uint256 _count
-    ) public returns (Unit memory newUnit) {
-        newUnit.id = _uniqueGlobalId;
-        newUnit.owner = _owner;
-        newUnit.unitType = _unitType;
-        newUnit.currentAction = _currentAction;
-        newUnit.hp = _hp;
-        newUnit.attack = _attack;
-        newUnit.armor = _armor;
-        newUnit.count = _count;
-        ownerToIdToUnit[_owner][_uniqueGlobalId] = newUnit;
+        address owner,
+        UnitTypes unitType,
+        ActionState currentAction,
+        uint256 hp,
+        uint256 attack,
+        uint256 armor,
+        uint256 count
+    ) public returns (Unit memory ) {
+        emit displayUint(unitGlobalId);
+            // Unit storage newUnit; 
+         unitIdToUnit[unitGlobalId].id = GameMaster.unitGlobalId;
+         unitIdToUnit[unitGlobalId].owner = owner;
+         unitIdToUnit[unitGlobalId].unitType = unitType;
+         unitIdToUnit[unitGlobalId].currentAction = currentAction;
+         unitIdToUnit[unitGlobalId].hp = hp;
+         unitIdToUnit[unitGlobalId].attack = attack;
+         unitIdToUnit[unitGlobalId].armor = armor;
+         unitIdToUnit[unitGlobalId].count = count;
+         unitIdToUnit[unitGlobalId].targetUnit=0;
+         unitIdToUnit[unitGlobalId].x=0;
+         unitIdToUnit[unitGlobalId].y=0;
+         unitIdToUnit[unitGlobalId].matchId=0; 
+         unitGlobalId++;
 
-        unitGlobalId++;
-
-        return newUnit;
+        emit displayNewUnit(unitIdToUnit[unitGlobalId]);
+        return  unitIdToUnit[unitGlobalId];
     }
+
+    //  function createNewUnit(
+    //     address owner,
+    //     UnitTypes unitType,
+    //     ActionState currentAction,
+    //     uint256 hp,
+    //     uint256 attack,
+    //     uint256 armor,
+    //     uint256 count
+    // ) public returns (Unit memory ) {
+    //     emit displayUint(unitGlobalId);
+    //     Uint storage newUnit; 
+    //      unitIdToUnit[unitGlobalId].id = GameMaster.unitGlobalId;
+    //      unitIdToUnit[unitGlobalId].owner = owner;
+    //      unitIdToUnit[unitGlobalId].unitType = unitType;
+    //      unitIdToUnit[unitGlobalId].currentAction = currentAction;
+    //      unitIdToUnit[unitGlobalId].hp = hp;
+    //      unitIdToUnit[unitGlobalId].attack = attack;
+    //      unitIdToUnit[unitGlobalId].armor = armor;
+    //      unitIdToUnit[unitGlobalId].count = count;
+    //      unitIdToUnit[unitGlobalId].targetUnit=0;
+    //      unitIdToUnit[unitGlobalId].x=0;
+    //      unitIdToUnit[unitGlobalId].y=0;
+    //      unitIdToUnit[unitGlobalId].matchId=0; 
+    //      unitGlobalId++;
+
+    //     emit displayNewUnit(unitIdToUnit[unitGlobalId]);
+    //     return  unitIdToUnit[unitGlobalId];
+    // }
 
     function initPlayer() public returns (Player memory newPlayer) {
         newPlayer = createNewPlayer(msg.sender, Rank.Sergeant);
         Unit memory newUnit1 = createNewUnit(
-            unitGlobalId,
-            msg.sender,
+            address(msg.sender),
             UnitTypes.infantry,
             ActionState.idle,
-            10,
-            1,
-            0,
-            3
+            uint(10),
+            uint(1),
+            uint(0),
+            uint(3)
         );
         Unit memory newUnit2 = createNewUnit(
-            unitGlobalId,
             msg.sender,
             UnitTypes.infantry,
             ActionState.idle,
@@ -130,7 +168,6 @@ contract GameMaster is GameElements {
             3
         );
         Unit memory newUnit3 = createNewUnit(
-            unitGlobalId,
             msg.sender,
             UnitTypes.infantry,
             ActionState.idle,
@@ -231,16 +268,16 @@ contract GameMaster is GameElements {
 
     function moveUnits(
         uint256 matchId,
-        uint256 new_x,
-        uint256 new_y,
+        uint256 newX,
+        uint256 newY,
         uint256 senderUnitsGlobalId,
-        uint256 old_x,
-        uint256 old_y
+        uint256 oldX,
+        uint256 oldY
     ) public returns (uint256[11][11] memory grid) {
         // unitid at old position
-        uint256 unitIdAtOldPos = matchIdToMatch[matchId].gameGrid[old_x][old_y];
+        uint256 unitIdAtOldPos = matchIdToMatch[matchId].gameGrid[oldX][oldY];
         // troop id at new position
-        uint256 unitIdAtNewPos = matchIdToMatch[matchId].gameGrid[new_x][new_y];
+        uint256 unitIdAtNewPos = matchIdToMatch[matchId].gameGrid[newX][newY];
 
         // a x,y Position cant have multiple units for the same position
         // a x,y Position must be 0/ empty for troops to move
@@ -263,13 +300,13 @@ contract GameMaster is GameElements {
         // is troop already at that position?.
         if (unitIdAtNewPos == 0) {
             // make old position empty
-            matchIdToMatch[matchId].gameGrid[old_x][old_y] = 0;
+            matchIdToMatch[matchId].gameGrid[oldX][oldY] = 0;
             // move unit to new position
-            matchIdToMatch[matchId].gameGrid[new_x][new_y] = unitIdAtOldPos;
+            matchIdToMatch[matchId].gameGrid[newX][newY] = unitIdAtOldPos;
         } else if (unitIdAtNewPos != 0) {
             // troops exists on the new position
 
-            resolveBattle(matchId, new_x, new_y, old_x, old_y);
+            resolveBattle(matchId, newX, newY, oldX, oldY);
         }
 
         return matchIdToMatch[matchId].gameGrid;
@@ -334,7 +371,7 @@ contract GameMaster is GameElements {
         unitGlobalId++;
         aInfantry.count = 1;
         aInfantry.owner = msg.sender;
-        ownerToIdToUnit[msg.sender][unitGlobalId] = aInfantry;
+         unitIdToUnit[unitGlobalId]= aInfantry;
         return aInfantry;
     }
 
@@ -348,7 +385,7 @@ contract GameMaster is GameElements {
         unitGlobalId++;
         aTank.count = 1;
         aTank.owner = msg.sender;
-        ownerToIdToUnit[msg.sender][unitGlobalId] = aTank;
+        unitIdToUnit[unitGlobalId] = aTank;
         return aTank;
     }
 

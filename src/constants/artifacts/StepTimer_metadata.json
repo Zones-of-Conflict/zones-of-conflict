@@ -1,0 +1,66 @@
+{
+	"compiler": {
+		"version": "0.8.17+commit.8df45f5f"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [],
+				"name": "start",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "timeToRender",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"src/constants/StepTimer.sol": "StepTimer"
+		},
+		"evmVersion": "london",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": false,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"src/constants/StepTimer.sol": {
+			"keccak256": "0xf74f5446c5fab6cdee2fd8d39e5227d9155210f4155f579031c8dedc265be29f",
+			"license": "GPL-3.0",
+			"urls": [
+				"bzz-raw://c0003323cbc34cc40afe20e9ba4f654d82c485a63c82f2901fe0c2d847601c68",
+				"dweb:/ipfs/QmZpCngVHTcFpnNqjvDWatZLrjoWj9UAkn3Z3kr3NgZ1HC"
+			]
+		}
+	},
+	"version": 1
+}

@@ -1,0 +1,83 @@
+{
+	"id": "777a644306773697a1b5fae3ceb312f3",
+	"_format": "hh-sol-build-info-1",
+	"solcVersion": "0.8.3",
+	"solcLongVersion": "0.8.3+commit.8d00100c",
+	"input": {
+		"language": "Solidity",
+		"sources": {
+			"src/constants/Rules.sol": {
+				"content": "\n        // render\n        // check game state\n        // game clock\n        // check all unnits allcoliiding?\n        // steps to next place if trooop is moving\n        //  one more step in battle logic battle have length\n        // if all troops state is dead foor one player gamee ends\n        // we move in x then y\n        // stop before the ongoing battle\n        // check in front , if its friendly you dont move\n        // movemetns be for loop\n    // moving state,\n    // eta\n    //  collison\n    //\n\n    // done\n\n    // Imp\n    // function place unit after start\n    // 3 units  _  _  _\n    // both sides\n    // done\n\n    // time function\n    // use effect\n    // done\n\n        // IMpl dyanmic steps\n    //  add a mapping for match id\n    // match id to unit id to unit position\n    // done\n    //  each unit has x and y an mathc id\n    // mathc has a truct of allinvolved units"
+			}
+		},
+		"settings": {
+			"optimizer": {
+				"enabled": false,
+				"runs": 200
+			},
+			"outputSelection": {
+				"*": {
+					"": [
+						"ast"
+					],
+					"*": [
+						"abi",
+						"metadata",
+						"devdoc",
+						"userdoc",
+						"storageLayout",
+						"evm.legacyAssembly",
+						"evm.bytecode",
+						"evm.deployedBytecode",
+						"evm.methodIdentifiers",
+						"evm.gasEstimates",
+						"evm.assembly"
+					]
+				}
+			}
+		}
+	},
+	"output": {
+		"errors": [
+			{
+				"component": "general",
+				"errorCode": "1878",
+				"formattedMessage": "Warning: SPDX license identifier not provided in source file. Before publishing, consider adding a comment containing \"SPDX-License-Identifier: <SPDX-License>\" to each source file. Use \"SPDX-License-Identifier: UNLICENSED\" for non-open-source code. Please see https://spdx.org for more information.\n--> src/constants/Rules.sol\n\n",
+				"message": "SPDX license identifier not provided in source file. Before publishing, consider adding a comment containing \"SPDX-License-Identifier: <SPDX-License>\" to each source file. Use \"SPDX-License-Identifier: UNLICENSED\" for non-open-source code. Please see https://spdx.org for more information.",
+				"severity": "warning",
+				"sourceLocation": {
+					"end": -1,
+					"file": "src/constants/Rules.sol",
+					"start": -1
+				},
+				"type": "Warning"
+			},
+			{
+				"component": "general",
+				"errorCode": "3420",
+				"formattedMessage": "Warning: Source file does not specify required compiler version! Consider adding \"pragma solidity ^0.8.3;\"\n--> src/constants/Rules.sol\n\n",
+				"message": "Source file does not specify required compiler version! Consider adding \"pragma solidity ^0.8.3;\"",
+				"severity": "warning",
+				"sourceLocation": {
+					"end": -1,
+					"file": "src/constants/Rules.sol",
+					"start": -1
+				},
+				"type": "Warning"
+			}
+		],
+		"sources": {
+			"src/constants/Rules.sol": {
+				"ast": {
+					"absolutePath": "src/constants/Rules.sol",
+					"exportedSymbols": {},
+					"id": 1,
+					"nodeType": "SourceUnit",
+					"nodes": [],
+					"src": "888:0:0"
+				},
+				"id": 0
+			}
+		}
+	}
+}

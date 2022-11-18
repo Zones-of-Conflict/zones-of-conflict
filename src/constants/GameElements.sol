@@ -1,10 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0
 
-pragma solidity 0.8.3;
+pragma solidity 0.8.17;
 import "./StepTimer.sol";
 
-
-contract GameElements  {
+contract GameElements {
     enum GameStatus {
         inactive,
         queued,
@@ -34,8 +33,8 @@ contract GameElements  {
 
     struct Match {
         // 1 minute = 1step
-        // 5 sec =1 step 
-        uint stepCount;
+        // 5 sec =1 step
+        uint256 stepCount;
         uint256 id;
         Player playerA;
         Player playerB;
@@ -45,7 +44,7 @@ contract GameElements  {
         // 0 none 1 A ,2B
         uint256 winner;
         StepTimer stepTimer;
-        uint[] participatingUnits;
+        uint256[] participatingUnits;
     }
 
     struct Unit {
@@ -58,12 +57,11 @@ contract GameElements  {
         uint256 armor;
         uint256 count;
         // 1 block per Step for infantry
-        uint speed ;
-        uint targetUint;
-        uint x;
-        uint y;
-        uint matchId;
-        
+        // uint256 speed= 0.2;
+        uint256 targetUnit;
+        uint256 x;
+        uint256 y;
+        uint256 matchId;
     }
 
     struct Player {
@@ -72,6 +70,4 @@ contract GameElements  {
         uint256 unitCount;
         uint256[] ownedUnitId;
     }
-   
-    
 }
