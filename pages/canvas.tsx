@@ -8,7 +8,7 @@ import { formatUnits } from "ethers/lib/utils";
 import { MainContext } from "../src/contexts/MainContext";
 import { GAMEMASTER_DATA } from "../src/constants/contractData";
 import { useContract, useProvider } from "wagmi";
-import ukraine from "../src/assets/ukraine.jpg";
+import Donetsk from "../src/assets/Donetsk.png";
 // use effect to get player info
 // when new player join call the same function
 // add the player 2 to array of player
@@ -384,21 +384,10 @@ const Canvas = () => {
     }
   };
   return (
-    <Box
-      display={"flex"}
-      flexDirection={"column"}
-      bgcolor={"grey.100"}
-      minHeight={"100vh"}
-      gap={5}
-    >
+    <Box display={"flex"} flexDirection={"column"} bgcolor={"grey.100"} minHeight={"100vh"} gap={5}>
       <Navbar />
 
-      <Box
-        display={"flex"}
-        flexDirection={"column"}
-        alignItems={"center"}
-        gap={4}
-      >
+      <Box display={"flex"} flexDirection={"column"} alignItems={"center"} gap={4}>
         <Typography variant="h1">Battle Map</Typography>
         <Button variant="contained" color="primary" onClick={playSound}>
           {" "}
