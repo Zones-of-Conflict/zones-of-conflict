@@ -18,7 +18,7 @@
 	},
 	"settings": {
 		"compilationTarget": {
-			"src/constants/GameElements.sol": "GameElements"
+			"GameElements.sol": "GameElements"
 		},
 		"evmVersion": "london",
 		"libraries": {},
@@ -32,15 +32,15 @@
 		"remappings": []
 	},
 	"sources": {
-		"src/constants/GameElements.sol": {
-			"keccak256": "0x74bd3682d40f3f296f62b8028a39e5702c5504cb8e5eef14a117c0f81c5b04d8",
+		"GameElements.sol": {
+			"keccak256": "0x669c78da46814285686ef863f2ee5abb1b1ba9edd2a5283838aa782a26e2a21c",
 			"license": "GPL-3.0",
 			"urls": [
-				"bzz-raw://2ed34189fd0a65dc5b7b5d032ca7bbddd90e9d35490416a8d977997e2b143596",
-				"dweb:/ipfs/QmbqkWnDXainrhBAvn4Xnj8m3BPwoBUNA3yRst4JLas7Wv"
+				"bzz-raw://931b9ebc9ca9ed6f2b5bf86046fa1fd26caad7882e88891b62bacb59e76105f4",
+				"dweb:/ipfs/QmdxH2eBmRi2MoLaGN3CUMLyY1RY6TC493DjuBA5DKqsjc"
 			]
 		},
-		"src/constants/StepTimer.sol": {
+		"StepTimer.sol": {
 			"keccak256": "0xf74f5446c5fab6cdee2fd8d39e5227d9155210f4155f579031c8dedc265be29f",
 			"license": "GPL-3.0",
 			"urls": [

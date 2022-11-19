@@ -12,6 +12,110 @@
 						"components": [
 							{
 								"internalType": "uint256",
+								"name": "stepCount",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "id",
+								"type": "uint256"
+							},
+							{
+								"components": [
+									{
+										"internalType": "address",
+										"name": "owner",
+										"type": "address"
+									},
+									{
+										"internalType": "enum GameElements.Rank",
+										"name": "rank",
+										"type": "uint8"
+									},
+									{
+										"internalType": "uint256",
+										"name": "unitCount",
+										"type": "uint256"
+									},
+									{
+										"internalType": "uint256[]",
+										"name": "ownedUnitId",
+										"type": "uint256[]"
+									}
+								],
+								"internalType": "struct GameElements.Player",
+								"name": "playerA",
+								"type": "tuple"
+							},
+							{
+								"components": [
+									{
+										"internalType": "address",
+										"name": "owner",
+										"type": "address"
+									},
+									{
+										"internalType": "enum GameElements.Rank",
+										"name": "rank",
+										"type": "uint8"
+									},
+									{
+										"internalType": "uint256",
+										"name": "unitCount",
+										"type": "uint256"
+									},
+									{
+										"internalType": "uint256[]",
+										"name": "ownedUnitId",
+										"type": "uint256[]"
+									}
+								],
+								"internalType": "struct GameElements.Player",
+								"name": "playerB",
+								"type": "tuple"
+							},
+							{
+								"internalType": "enum GameElements.GameStatus",
+								"name": "status",
+								"type": "uint8"
+							},
+							{
+								"internalType": "uint256[11][11]",
+								"name": "gameGrid",
+								"type": "uint256[11][11]"
+							},
+							{
+								"internalType": "uint256",
+								"name": "winner",
+								"type": "uint256"
+							},
+							{
+								"internalType": "contract StepTimer",
+								"name": "stepTimer",
+								"type": "address"
+							},
+							{
+								"internalType": "uint256[]",
+								"name": "participatingUnits",
+								"type": "uint256[]"
+							}
+						],
+						"indexed": false,
+						"internalType": "struct GameElements.Match",
+						"name": "",
+						"type": "tuple"
+					}
+				],
+				"name": "DisplayMatch",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"components": [
+							{
+								"internalType": "uint256",
 								"name": "id",
 								"type": "uint256"
 							},
@@ -481,6 +585,81 @@
 				"type": "function"
 			},
 			{
+				"inputs": [],
+				"name": "getPlayerUnits",
+				"outputs": [
+					{
+						"components": [
+							{
+								"internalType": "uint256",
+								"name": "id",
+								"type": "uint256"
+							},
+							{
+								"internalType": "address",
+								"name": "owner",
+								"type": "address"
+							},
+							{
+								"internalType": "enum GameElements.UnitTypes",
+								"name": "unitType",
+								"type": "uint8"
+							},
+							{
+								"internalType": "enum GameElements.ActionState",
+								"name": "currentAction",
+								"type": "uint8"
+							},
+							{
+								"internalType": "uint256",
+								"name": "hp",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "attack",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "armor",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "count",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "targetUnit",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "x",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "y",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "matchId",
+								"type": "uint256"
+							}
+						],
+						"internalType": "struct GameElements.Unit[]",
+						"name": "",
+						"type": "tuple[]"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
 				"inputs": [
 					{
 						"internalType": "uint256",
@@ -801,81 +980,6 @@
 				"type": "function"
 			},
 			{
-				"inputs": [],
-				"name": "listUnits",
-				"outputs": [
-					{
-						"components": [
-							{
-								"internalType": "uint256",
-								"name": "id",
-								"type": "uint256"
-							},
-							{
-								"internalType": "address",
-								"name": "owner",
-								"type": "address"
-							},
-							{
-								"internalType": "enum GameElements.UnitTypes",
-								"name": "unitType",
-								"type": "uint8"
-							},
-							{
-								"internalType": "enum GameElements.ActionState",
-								"name": "currentAction",
-								"type": "uint8"
-							},
-							{
-								"internalType": "uint256",
-								"name": "hp",
-								"type": "uint256"
-							},
-							{
-								"internalType": "uint256",
-								"name": "attack",
-								"type": "uint256"
-							},
-							{
-								"internalType": "uint256",
-								"name": "armor",
-								"type": "uint256"
-							},
-							{
-								"internalType": "uint256",
-								"name": "count",
-								"type": "uint256"
-							},
-							{
-								"internalType": "uint256",
-								"name": "targetUnit",
-								"type": "uint256"
-							},
-							{
-								"internalType": "uint256",
-								"name": "x",
-								"type": "uint256"
-							},
-							{
-								"internalType": "uint256",
-								"name": "y",
-								"type": "uint256"
-							},
-							{
-								"internalType": "uint256",
-								"name": "matchId",
-								"type": "uint256"
-							}
-						],
-						"internalType": "struct GameElements.Unit[]",
-						"name": "",
-						"type": "tuple[]"
-					}
-				],
-				"stateMutability": "nonpayable",
-				"type": "function"
-			},
-			{
 				"inputs": [
 					{
 						"internalType": "enum GameElements.UnitTypes",
@@ -1172,6 +1276,9 @@
 		"devdoc": {
 			"kind": "dev",
 			"methods": {
+				"getPlayerUnits()": {
+					"details": "list player owner units"
+				},
 				"render(uint256)": {
 					"details": "need to be called every 5 seconds game will not progess if no called render"
 				}
@@ -1179,11 +1286,6 @@
 			"version": 1
 		},
 		"userdoc": {
-			"events": {
-				"displayArmy((uint256,address,uint8,uint8,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256)[])": {
-					"notice": "Api Functions"
-				}
-			},
 			"kind": "user",
 			"methods": {
 				"initPlayer()": {
@@ -1198,7 +1300,7 @@
 	},
 	"settings": {
 		"compilationTarget": {
-			"src/constants/GameMaster.sol": "GameMaster"
+			"GameMaster.sol": "GameMaster"
 		},
 		"evmVersion": "london",
 		"libraries": {},
@@ -1212,7 +1314,7 @@
 		"remappings": []
 	},
 	"sources": {
-		"src/constants/GameElements.sol": {
+		"GameElements.sol": {
 			"keccak256": "0x74bd3682d40f3f296f62b8028a39e5702c5504cb8e5eef14a117c0f81c5b04d8",
 			"license": "GPL-3.0",
 			"urls": [
@@ -1220,15 +1322,15 @@
 				"dweb:/ipfs/QmbqkWnDXainrhBAvn4Xnj8m3BPwoBUNA3yRst4JLas7Wv"
 			]
 		},
-		"src/constants/GameMaster.sol": {
-			"keccak256": "0x8ba33192989ac00533b53374635e8dda0cff21fee90f60b9d2f8f8ea46ff43cf",
+		"GameMaster.sol": {
+			"keccak256": "0x931f3a14521ecfcbf4803c1e08e5889cb5958439b6716268649603058c26c465",
 			"license": "GPL-3.0",
 			"urls": [
-				"bzz-raw://ae7020dcf95261be56e915369aebc63eeaaed34aff709b73ad520334bcb55c05",
-				"dweb:/ipfs/QmWoJ7cPB44CgunC3CYyHFQfnkmgoV6ytEMwuGXWd1XsCY"
+				"bzz-raw://846f333edf68b64d4a260202a4424be626f613d2b35aa28350a16f24eb3580ef",
+				"dweb:/ipfs/QmU9QNKfpuSfQ9QhCTZKePvUiV3cxXLyC7QZxnT1ioNWfh"
 			]
 		},
-		"src/constants/StepTimer.sol": {
+		"StepTimer.sol": {
 			"keccak256": "0xf74f5446c5fab6cdee2fd8d39e5227d9155210f4155f579031c8dedc265be29f",
 			"license": "GPL-3.0",
 			"urls": [

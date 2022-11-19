@@ -5,8 +5,12 @@ import "./GameElements.sol";
 import "./StepTimer.sol";
 
 contract GameMaster is GameElements {
+
+
+
     //  zero reserved
     uint256 internal matchCount = 1;
+    uint256 internal unitGlobalId = 1;
     uint256 internal unitGlobalId = 1;
 
     mapping(address => GameElements.Player) internal addressToPlayer;
@@ -15,10 +19,12 @@ contract GameMaster is GameElements {
     mapping(uint256 => GameElements.Unit) internal unitIdToUnit;
     Player internal tempPlayer;
     Unit internal tempUnit;
+
     event displayNewUnit(Unit);
     event displayUint(uint256);
     event DisplayMatch(Match);
-
+    event displayArmy(Unit[]);
+    event displayPlayer(Player);
 
     ///////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////
@@ -26,10 +32,8 @@ contract GameMaster is GameElements {
     /////////////////    //////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////
 
-    event displayArmy(Unit[]);
-    event displayPlayer(Player);
-
-    function listUnits() public returns (Unit[] memory) {
+    /// @dev list player owner units
+    function getPlayerUnits() public returns (Unit[] memory) {
         require(
             addressToPlayer[msg.sender].unitCount != 0,
             "You have no Troops"
@@ -37,11 +41,36 @@ contract GameMaster is GameElements {
         Player memory player = addressToPlayer[msg.sender];
         emit displayPlayer(player);
         Unit[] memory armyList = new Unit[](player.unitCount);
-        for (uint256 i = 0; i < player.unitCount - 1; i++) {
+        for (uint256 i = 0; i < player.unitCount; i++) {
             armyList[i] = unitIdToUnit[player.ownedUnitId[i]];
         }
         emit displayArmy(armyList);
         return armyList;
+    }
+
+    function getMatchState(uint256 matchId) public view returns (Match memory) {
+        require(
+            matchIdToMatch[matchId].status != GameStatus.none,
+            "Match does not exist"
+        );
+        return matchIdToMatch[matchId];
+    }
+
+    function getPlayer() public view returns (Player memory) {
+        // player must exiist before
+        require(
+            addressToPlayer[msg.sender].rank != Rank.none,
+            "Player does not exist"
+        );
+        return addressToPlayer[msg.sender];
+    }
+
+    function getUnitInfo(uint256 unitId) public view returns (Unit memory) {
+        require(
+            unitIdToUnit[unitId].owner != address(0),
+            "Unit Does not exist"
+        );
+        return unitIdToUnit[unitId];
     }
 
     function mintNewUnit(
@@ -63,18 +92,6 @@ contract GameMaster is GameElements {
             1
         );
         return temp;
-    }
-
-    function getMatchState(uint256 matchId) public view returns (Match memory) {
-        return matchIdToMatch[matchId];
-    }
-
-    function getPlayer() public view returns (Player memory) {
-        return addressToPlayer[msg.sender];
-    }
-
-    function getUnitInfo(uint256 unitId) public view returns (Unit memory) {
-        return unitIdToUnit[unitId];
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -99,7 +116,7 @@ contract GameMaster is GameElements {
             UnitTypes.infantry,
             ActionState.idle,
             10,
-            1,
+            2,
             0,
             3
         );
@@ -109,7 +126,7 @@ contract GameMaster is GameElements {
             ActionState.idle,
             10,
             1,
-            0,
+            1,
             3
         );
         assignUnitToPlayer(msg.sender, newUnit1);
@@ -156,6 +173,7 @@ contract GameMaster is GameElements {
         unitIdToUnit[unitGlobalId].y = 0;
         unitIdToUnit[unitGlobalId].matchId = 0;
         unitGlobalId++;
+        emit displayNewUnit(unitIdToUnit[unitGlobalId - 1]);
         return unitGlobalId - 1;
     }
 

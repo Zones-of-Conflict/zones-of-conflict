@@ -5,7 +5,7 @@ import "./StepTimer.sol";
 
 contract GameElements {
     enum GameStatus {
-        inactive,
+        none,
         queued,
         active,
         ended
@@ -31,6 +31,22 @@ contract GameElements {
         regenerating
     }
 
+    enum EventType {
+        none,
+        moveUnit,
+        haltUnit,
+        attack,
+        startBattle,
+        processBattle
+    }
+
+    struct Event {
+        EventType EventType;
+        uint256 eventId;
+        uint256 involvedUnitId;
+        address generatedByPlayer;
+    }
+
     struct Match {
         // 1 minute = 1step
         // 5 sec =1 step
@@ -45,6 +61,7 @@ contract GameElements {
         uint256 winner;
         StepTimer stepTimer;
         uint256[] participatingUnits;
+        uint256[] eventQueue;
     }
 
     struct Unit {
