@@ -9,7 +9,10 @@ import { configureChains, createClient, WagmiConfig } from "wagmi";
 import { publicProvider } from "wagmi/providers/public";
 import { auroraTestnet } from "../src/constants/chains";
 
-const { provider } = configureChains([auroraTestnet], [publicProvider() as any]);
+const { provider } = configureChains(
+  [auroraTestnet],
+  [publicProvider() as any]
+);
 
 const { connectors } = getDefaultWallets({
   appName: "Zones of Conflict",

@@ -167,4 +167,6 @@ contract GameMaster is GameElements {
     //     //returns winner
     //     return unitOneId;
     // }
+    // ToDo 
+    // function to get player info 
 }
