@@ -417,7 +417,7 @@ const Canvas = () => {
             height="600"
             style={{
               border: "1px solid #ccc",
-              backgroundImage: `url(${ukraine.src})`,
+              backgroundImage: `url(${Donetsk.src})`,
               width: "100%",
               height: "100%",
               backgroundPosition: "top left",

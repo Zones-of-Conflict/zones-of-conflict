@@ -28,9 +28,9 @@ export default function Home() {
     signerOrProvider: signer,
   });
 
-  const startMatch = async () => {
+  const createMatch = async () => {
     try {
-      const result = await GAMEMASTER_WRITE?.matchFactory();
+      const result = await GAMEMASTER_WRITE?.createMatch();
       console.log(result.hash);
       if (result) {
         console.log("hey");
@@ -46,7 +46,7 @@ export default function Home() {
     }
   };
 
-  const joinmatch = async (_matchId) => {
+  const joinMatch = async (_matchId) => {
     //  GAMEMASTER_WRITE?.joinMatch(_matchId);
     try {
       const result = await GAMEMASTER_WRITE?.joinMatch(_matchId);
@@ -69,8 +69,8 @@ export default function Home() {
   const mainContext = {
     GAMEMASTER_READ,
     GAMEMASTER_WRITE,
-    startMatch,
-    joinmatch,
+    createMatch,
+    joinMatch,
   };
   return (
     <MainContext.Provider value={mainContext}>

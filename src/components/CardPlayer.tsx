@@ -18,8 +18,7 @@ export default function CardPlayer({ id, units, src, rank }: CardProps) {
       sx={{
         width: 250,
         backgroundColor: "#fafafa",
-        boxShadow:
-          "rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px",
+        boxShadow: "rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px",
       }}
     >
       <CardMedia sx={{ height: 250 }} image={src} />
@@ -32,12 +31,7 @@ export default function CardPlayer({ id, units, src, rank }: CardProps) {
           {rank}
         </Typography>
         {units.map((unit) => (
-          <Typography
-            key={unit.unitId}
-            color="textSecondary"
-            variant="subtitle2"
-            sx={{ mb: 1 }}
-          >
+          <Typography key={unit.unitId} color="textSecondary" variant="subtitle2" sx={{ mb: 1 }}>
             {unit.unitType}
           </Typography>
         ))}

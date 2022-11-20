@@ -1,5 +1,144 @@
 const GAMEMASTER_ABI = [
 	{
+		"inputs": [],
+		"name": "createMatch",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_matchId",
+				"type": "uint256"
+			}
+		],
+		"name": "joinMatch",
+		"outputs": [
+			{
+				"components": [
+					{
+						"internalType": "uint256",
+						"name": "id",
+						"type": "uint256"
+					},
+					{
+						"components": [
+							{
+								"internalType": "address",
+								"name": "owner",
+								"type": "address"
+							},
+							{
+								"internalType": "enum GameElements.Rank",
+								"name": "rank",
+								"type": "uint8"
+							},
+							{
+								"internalType": "uint256[3]",
+								"name": "unitIds",
+								"type": "uint256[3]"
+							},
+							{
+								"internalType": "uint256",
+								"name": "matchId",
+								"type": "uint256"
+							}
+						],
+						"internalType": "struct GameElements.Player",
+						"name": "playerA",
+						"type": "tuple"
+					},
+					{
+						"components": [
+							{
+								"internalType": "address",
+								"name": "owner",
+								"type": "address"
+							},
+							{
+								"internalType": "enum GameElements.Rank",
+								"name": "rank",
+								"type": "uint8"
+							},
+							{
+								"internalType": "uint256[3]",
+								"name": "unitIds",
+								"type": "uint256[3]"
+							},
+							{
+								"internalType": "uint256",
+								"name": "matchId",
+								"type": "uint256"
+							}
+						],
+						"internalType": "struct GameElements.Player",
+						"name": "playerB",
+						"type": "tuple"
+					},
+					{
+						"internalType": "enum GameElements.GameStatus",
+						"name": "status",
+						"type": "uint8"
+					},
+					{
+						"internalType": "uint256",
+						"name": "winner",
+						"type": "uint256"
+					}
+				],
+				"internalType": "struct GameElements.Match",
+				"name": "",
+				"type": "tuple"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_matchId",
+				"type": "uint256"
+			}
+		],
+		"name": "renderStep",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_unitId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_targetX",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_targetY",
+				"type": "uint256"
+			}
+		],
+		"name": "setUnitTarget",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
 		"inputs": [
 			{
 				"internalType": "address",
@@ -26,19 +165,6 @@ const GAMEMASTER_ABI = [
 			}
 		],
 		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "createMatch",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -217,96 +343,6 @@ const GAMEMASTER_ABI = [
 		"inputs": [
 			{
 				"internalType": "uint256",
-				"name": "_matchId",
-				"type": "uint256"
-			}
-		],
-		"name": "joinMatch",
-		"outputs": [
-			{
-				"components": [
-					{
-						"internalType": "uint256",
-						"name": "id",
-						"type": "uint256"
-					},
-					{
-						"components": [
-							{
-								"internalType": "address",
-								"name": "owner",
-								"type": "address"
-							},
-							{
-								"internalType": "enum GameElements.Rank",
-								"name": "rank",
-								"type": "uint8"
-							},
-							{
-								"internalType": "uint256[3]",
-								"name": "unitIds",
-								"type": "uint256[3]"
-							},
-							{
-								"internalType": "uint256",
-								"name": "matchId",
-								"type": "uint256"
-							}
-						],
-						"internalType": "struct GameElements.Player",
-						"name": "playerA",
-						"type": "tuple"
-					},
-					{
-						"components": [
-							{
-								"internalType": "address",
-								"name": "owner",
-								"type": "address"
-							},
-							{
-								"internalType": "enum GameElements.Rank",
-								"name": "rank",
-								"type": "uint8"
-							},
-							{
-								"internalType": "uint256[3]",
-								"name": "unitIds",
-								"type": "uint256[3]"
-							},
-							{
-								"internalType": "uint256",
-								"name": "matchId",
-								"type": "uint256"
-							}
-						],
-						"internalType": "struct GameElements.Player",
-						"name": "playerB",
-						"type": "tuple"
-					},
-					{
-						"internalType": "enum GameElements.GameStatus",
-						"name": "status",
-						"type": "uint8"
-					},
-					{
-						"internalType": "uint256",
-						"name": "winner",
-						"type": "uint256"
-					}
-				],
-				"internalType": "struct GameElements.Match",
-				"name": "",
-				"type": "tuple"
-			}
-		],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
 				"name": "",
 				"type": "uint256"
 			}
@@ -384,42 +420,6 @@ const GAMEMASTER_ABI = [
 			}
 		],
 		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "_matchId",
-				"type": "uint256"
-			}
-		],
-		"name": "renderStep",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "_unitId",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_targetX",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_targetY",
-				"type": "uint256"
-			}
-		],
-		"name": "setUnitTarget",
-		"outputs": [],
-		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -506,7 +506,7 @@ const GAMEMASTER_ABI = [
 export type Contract = { address: string; abi: any; chainId: number };
 
 export const GAMEMASTER_DATA = {
-  testnetAddress: "0x97f2B8c26345301A5aEF9b22601Dc9ad02DE1dD2",
+  testnetAddress: "0x776fc3130D65225B01227aC08fB51e29E2B87e40",
 
   abi: GAMEMASTER_ABI,
 };

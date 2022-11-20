@@ -3,7 +3,7 @@ import { MainContext } from "../contexts/MainContext";
 import { useContext, useState } from "react";
 
 export default function GameMenu() {
-  const { startMatch, joinmatch } = useContext(MainContext);
+  const { createMatch, joinMatch } = useContext(MainContext);
 
   const defaultValues = {
     matchId: "",
@@ -13,8 +13,8 @@ export default function GameMenu() {
   console.log(formValues);
   return (
     <Box display={"flex"} flexDirection={"row"} gap={5}>
-      <Button onClick={() => startMatch()} variant={"contained"}>
-        Start a Match
+      <Button onClick={() => createMatch()} variant={"contained"}>
+        Create a Match
       </Button>
 
       <TextField
@@ -25,7 +25,7 @@ export default function GameMenu() {
         onChange={(e) => setFormValues({ ...formValues, matchId: e.target.value })}
       />
 
-      <Button onClick={() => joinmatch(formValues.matchId)} variant={"contained"}>
+      <Button onClick={() => joinMatch(formValues.matchId)} variant={"contained"}>
         Join a Match
       </Button>
     </Box>

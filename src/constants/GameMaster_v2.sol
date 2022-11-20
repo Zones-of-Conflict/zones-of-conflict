@@ -66,6 +66,7 @@ contract GameMaster is GameElements {
     //  zero reserved
     uint256 internal matchCount = 1;
     uint256 internal unitGlobalId = 1;
+    uint256 internal randomNonce = 1;
 
     mapping(address => Player) public addressToPlayer;
     mapping(uint256 => Unit) public unitIdToUnit;
@@ -184,6 +185,7 @@ contract GameMaster is GameElements {
             0,
             0
         );
+
         unitIdToUnit[unitGlobalId] = newUnitDrone;
         newUnitIds[2] = unitGlobalId;
         unitGlobalId++;
@@ -425,8 +427,6 @@ contract GameMaster is GameElements {
             unitIdToUnit[matchUnits[i].id] = matchUnits[i];
         }
     }
-
-    uint256 internal randomNonce = 1;
 
     function random() private returns (uint256) {
         randomNonce++;
