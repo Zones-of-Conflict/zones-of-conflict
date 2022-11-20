@@ -217,6 +217,15 @@ contract GameMaster is GameElements {
         addressToPlayer[msg.sender].matchId = matchCount;
 
         matchCount++;
+
+        // set alll of playerA units currentX to 0 and Current Y random number 0-9
+        for (uint i = 0; i < 3; i++) {
+            unitIdToUnit[addressToPlayer[msg.sender].unitIds[i]].currentX = 0;
+            unitIdToUnit[addressToPlayer[msg.sender].unitIds[i]].currentY =
+                i *
+                3;
+        }
+
         return newMatch.id;
     }
 
@@ -238,6 +247,13 @@ contract GameMaster is GameElements {
         matchIdToMatch[_matchId].status = GameStatus.ACTIVE;
         addressToPlayer[msg.sender].matchId = _matchId;
 
+        // set alll of playerA units currentX to 9 and Current Y random number 0-9
+        for (uint i = 0; i < 3; i++) {
+            unitIdToUnit[addressToPlayer[msg.sender].unitIds[i]].currentX = 9;
+            unitIdToUnit[addressToPlayer[msg.sender].unitIds[i]].currentY =
+                i *
+                3;
+        }
         return matchIdToMatch[_matchId];
     }
 
@@ -319,43 +335,43 @@ contract GameMaster is GameElements {
                 if (matchUnits[i].action == Action.BATTLING) {
                     if (matchUnits[i].unitType == UnitTypes.INFANTRY) {
                         if (matchUnits[j].unitType == UnitTypes.INFANTRY) {
-                            if (random(1) % 2 == 0) {
+                            if (random() % 2 == 0) {
                                 matchUnits[j].hp -= matchUnits[i].attack;
                             }
                         } else if (matchUnits[j].unitType == UnitTypes.TANK) {
-                            if (random(5) % 2 == 0) {
+                            if (random() % 2 == 0) {
                                 matchUnits[j].hp -= matchUnits[i].attack;
                             }
                         } else if (matchUnits[j].unitType == UnitTypes.DRONE) {
-                            if (random(3) % 2 == 0) {
+                            if (random() % 2 == 0) {
                                 matchUnits[j].hp -= matchUnits[i].attack;
                             }
                         }
                     } else if (matchUnits[i].unitType == UnitTypes.TANK) {
                         if (matchUnits[j].unitType == UnitTypes.INFANTRY) {
-                            if (random(2) % 2 == 0) {
+                            if (random() % 2 == 0) {
                                 matchUnits[j].hp -= matchUnits[i].attack;
                             }
                         } else if (matchUnits[j].unitType == UnitTypes.TANK) {
-                            if (random(6) % 2 == 0) {
+                            if (random() % 2 == 0) {
                                 matchUnits[j].hp -= matchUnits[i].attack;
                             }
                         } else if (matchUnits[j].unitType == UnitTypes.DRONE) {
-                            if (random(7) % 2 == 0) {
+                            if (random() % 2 == 0) {
                                 matchUnits[j].hp -= matchUnits[i].attack;
                             }
                         }
                     } else if (matchUnits[i].unitType == UnitTypes.DRONE) {
                         if (matchUnits[j].unitType == UnitTypes.INFANTRY) {
-                            if (random(3) % 2 == 0) {
+                            if (random() % 2 == 0) {
                                 matchUnits[j].hp -= matchUnits[i].attack;
                             }
                         } else if (matchUnits[j].unitType == UnitTypes.TANK) {
-                            if (random(1) % 2 == 0) {
+                            if (random() % 2 == 0) {
                                 matchUnits[j].hp -= matchUnits[i].attack;
                             }
                         } else if (matchUnits[j].unitType == UnitTypes.DRONE) {
-                            if (random(4) % 2 == 0) {
+                            if (random() % 2 == 0) {
                                 matchUnits[j].hp -= matchUnits[i].attack;
                             }
                         }
@@ -410,14 +426,17 @@ contract GameMaster is GameElements {
         }
     }
 
-    function random(uint256 _randomInt) private view returns (uint256) {
+    uint256 internal randomNonce = 1;
+
+    function random() private returns (uint256) {
+        randomNonce++;
         return
             uint256(
                 keccak256(
                     abi.encodePacked(
                         block.difficulty,
                         block.timestamp,
-                        _randomInt
+                        randomNonce
                     )
                 )
             );
