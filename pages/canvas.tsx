@@ -112,12 +112,12 @@ const Canvas = () => {
 
   // draw the unit in the middle of the grid rect
   const placeAtGrid = (unit) => {
-    let xGrid = Math.floor(unit.currentX * 60);
-    let yGrid = Math.floor(unit.currentY * 60);
+    let xGrid = Math.floor(unit.x / 60);
+    let yGrid = Math.floor(unit.y / 60);
     if (xGrid > 9) xGrid = 9;
     if (yGrid > 9) yGrid = 9;
-    unit.currentX = unit.currentX * 60;
-    unit.currentY = unit.currentY * 60;
+    unit.x = xGrid * 60 + 30;
+    unit.y = yGrid * 60 + 30;
   };
 
   // calcaulte the interval of the unit in the grid
@@ -219,6 +219,7 @@ const Canvas = () => {
       ctx.moveTo(end.x - 7.5, end.y);
       ctx.lineTo(end.x + 7.5, end.y);
       ctx.fillStyle = "#ffffff";
+      placeAtGrid(end);
       if (!isIntersectPoint({ x: end.x, y: end.y }, selectedItem)) {
         ctx.fillText("Set target", end.x + 10, end.y - 10);
         ctx.strokeStyle = "red";

@@ -10,7 +10,6 @@ export default function GameMenu() {
   };
 
   const [formValues, setFormValues] = useState(defaultValues);
-  console.log(formValues);
   return (
     <Box display={"flex"} flexDirection={"row"} gap={5}>
       <Button onClick={() => createMatch()} variant={"contained"}>

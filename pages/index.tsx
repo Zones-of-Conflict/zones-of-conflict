@@ -31,9 +31,7 @@ export default function Home() {
   const createMatch = async () => {
     try {
       const result = await GAMEMASTER_WRITE?.createMatch();
-      console.log(result.hash);
       if (result) {
-        console.log("hey");
         const { pathname } = Router;
         if (pathname == "/") {
           Router.push("/canvas");
@@ -50,7 +48,6 @@ export default function Home() {
     //  GAMEMASTER_WRITE?.joinMatch(_matchId);
     try {
       const result = await GAMEMASTER_WRITE?.joinMatch(_matchId);
-      console.log(result.hash);
       if (result) {
         const { pathname } = Router;
         if (pathname == "/") {
