@@ -39,9 +39,6 @@ const Canvas = () => {
   const [normalized, setNormalized] = useState(false);
   const [match, setMatch] = useState() as any;
 
-  // function setCoordinates({}) {}
-  // const setPlayer=() => { };
-
   //getMatch
   useEffect(() => {
     const getPlayer = async () => {
@@ -117,10 +114,10 @@ const Canvas = () => {
   const placeAtGrid = (unit) => {
     let xGrid = Math.floor(unit.currentX * 60);
     let yGrid = Math.floor(unit.currentY * 60);
-    // if (xGrid > 9) xGrid = 9;
-    // if (yGrid > 9) yGrid = 9;
-    // unit.currentX = unit.currentX * 60;
-    // unit.currentY = unit.currentY * 60;
+    if (xGrid > 9) xGrid = 9;
+    if (yGrid > 9) yGrid = 9;
+    unit.currentX = unit.currentX * 60;
+    unit.currentY = unit.currentY * 60;
   };
 
   // calcaulte the interval of the unit in the grid
@@ -212,8 +209,8 @@ const Canvas = () => {
 
       ctx.closePath();
       ctx.stroke();
-      //draw crosshair
 
+      //draw crosshair
       ctx.setLineDash([]);
       ctx.lineWidth = 1.5;
       ctx.beginPath();

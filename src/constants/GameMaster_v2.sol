@@ -185,7 +185,6 @@ contract GameMaster is GameElements {
             0,
             0
         );
-
         unitIdToUnit[unitGlobalId] = newUnitDrone;
         newUnitIds[2] = unitGlobalId;
         unitGlobalId++;
@@ -208,6 +207,7 @@ contract GameMaster is GameElements {
             // if not initialize the player
             initPlayer();
         }
+        require(addressToPlayer[msg.sender].matchId == 0, "Already in a match");
         // get match id and increase the id
         Match memory newMatch;
         newMatch.id = matchCount;
@@ -232,6 +232,10 @@ contract GameMaster is GameElements {
     }
 
     function joinMatch(uint256 _matchId) public returns (Match memory) {
+        if (addressToPlayer[msg.sender].rank == Rank.NONE) {
+            // the player trying to join the game must have a player sttruct mapping
+            initPlayer();
+        }
         require(
             matchIdToMatch[_matchId].status == GameStatus.QUEUED,
             "Invalid MatchId"
@@ -240,11 +244,8 @@ contract GameMaster is GameElements {
             matchIdToMatch[_matchId].playerA.owner != msg.sender,
             "You can't battle yourself."
         );
+        require(addressToPlayer[msg.sender].matchId == 0, "Already in a match");
 
-        if (addressToPlayer[msg.sender].rank == Rank.NONE) {
-            // the player trying to join the game must have a player sttruct mapping
-            initPlayer();
-        }
         matchIdToMatch[_matchId].playerB = addressToPlayer[msg.sender];
         matchIdToMatch[_matchId].status = GameStatus.ACTIVE;
         addressToPlayer[msg.sender].matchId = _matchId;
@@ -329,55 +330,20 @@ contract GameMaster is GameElements {
                     matchUnits[i].currentX == matchUnits[j].currentX &&
                     matchUnits[i].currentY == matchUnits[j].currentY
                 ) {
-                    matchUnits[i].action = Action.BATTLING;
-                    matchUnits[j].action = Action.BATTLING;
+                    //if units are not owned by the same player set to battling
+                    if (matchUnits[i].owner != matchUnits[j].owner) {
+                        matchUnits[i].action = Action.BATTLING;
+                        matchUnits[j].action = Action.BATTLING;
+                    }
                 }
 
-                //if battling, random chance to hit Unit.enemy
-                if (matchUnits[i].action == Action.BATTLING) {
-                    if (matchUnits[i].unitType == UnitTypes.INFANTRY) {
-                        if (matchUnits[j].unitType == UnitTypes.INFANTRY) {
-                            if (random() % 2 == 0) {
-                                matchUnits[j].hp -= matchUnits[i].attack;
-                            }
-                        } else if (matchUnits[j].unitType == UnitTypes.TANK) {
-                            if (random() % 2 == 0) {
-                                matchUnits[j].hp -= matchUnits[i].attack;
-                            }
-                        } else if (matchUnits[j].unitType == UnitTypes.DRONE) {
-                            if (random() % 2 == 0) {
-                                matchUnits[j].hp -= matchUnits[i].attack;
-                            }
-                        }
-                    } else if (matchUnits[i].unitType == UnitTypes.TANK) {
-                        if (matchUnits[j].unitType == UnitTypes.INFANTRY) {
-                            if (random() % 2 == 0) {
-                                matchUnits[j].hp -= matchUnits[i].attack;
-                            }
-                        } else if (matchUnits[j].unitType == UnitTypes.TANK) {
-                            if (random() % 2 == 0) {
-                                matchUnits[j].hp -= matchUnits[i].attack;
-                            }
-                        } else if (matchUnits[j].unitType == UnitTypes.DRONE) {
-                            if (random() % 2 == 0) {
-                                matchUnits[j].hp -= matchUnits[i].attack;
-                            }
-                        }
-                    } else if (matchUnits[i].unitType == UnitTypes.DRONE) {
-                        if (matchUnits[j].unitType == UnitTypes.INFANTRY) {
-                            if (random() % 2 == 0) {
-                                matchUnits[j].hp -= matchUnits[i].attack;
-                            }
-                        } else if (matchUnits[j].unitType == UnitTypes.TANK) {
-                            if (random() % 2 == 0) {
-                                matchUnits[j].hp -= matchUnits[i].attack;
-                            }
-                        } else if (matchUnits[j].unitType == UnitTypes.DRONE) {
-                            if (random() % 2 == 0) {
-                                matchUnits[j].hp -= matchUnits[i].attack;
-                            }
-                        }
-                    }
+                //if battling, units attack each other one time
+                if (
+                    matchUnits[i].action == Action.BATTLING &&
+                    matchUnits[j].action == Action.BATTLING
+                ) {
+                    matchUnits[i].hp -= matchUnits[j].attack * random();
+                    matchUnits[j].hp -= matchUnits[i].attack * random();
                 }
 
                 //if unit health is 10 or less (to avoid uint error) set action to dead
@@ -428,17 +394,19 @@ contract GameMaster is GameElements {
         }
     }
 
-    function random() private returns (uint256) {
+    //random number returning 0 or 1
+    function random() internal returns (uint256) {
         randomNonce++;
         return
             uint256(
                 keccak256(
                     abi.encodePacked(
-                        block.difficulty,
                         block.timestamp,
+                        block.difficulty,
+                        msg.sender,
                         randomNonce
                     )
                 )
-            );
+            ) % 2;
     }
 }
