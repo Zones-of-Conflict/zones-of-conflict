@@ -324,7 +324,7 @@ const Canvas = () => {
         </Button>
         <Box sx={{ display: "flex", flexDirection: "row" }}>
           <Box sx={{ display: "flex", flexDirection: "column", p: 4 }}>
-            <CardPlayer matchUnits={matchUnits} />
+            {/* <CardPlayer matchUnits={matchUnits} /> */}
           </Box>
           <canvas
             ref={canvasRef}
@@ -345,7 +345,7 @@ const Canvas = () => {
             }}
           />
           <Box sx={{ display: "flex", flexDirection: "column", p: 4 }}>
-            <CardPlayer matchUnits={matchUnits} />
+            {/* <CardPlayer matchUnits={matchUnits} /> */}
           </Box>
         </Box>
       </Box>
