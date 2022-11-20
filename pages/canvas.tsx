@@ -52,7 +52,9 @@ const Canvas = () => {
       setMatch(matchFetch);
     };
     GAMEMASTER_READ && player && getMatch();
+  }, [GAMEMASTER_READ]);
 
+  useEffect(() => {
     const getUnits = async () => {
       const units = await GAMEMASTER_READ?.getMatchUnits(player?.matchId);
       const normalizedUnits = units.map((unit) => {
@@ -77,14 +79,24 @@ const Canvas = () => {
           targetY: Number(unit.targetY),
           matchId: Number(unit.matchId),
           enemyId: Number(unit.enemyId),
-          src: unit.owner.toLowerCase() === address.toLowerCase() ? "/tank1.png" : "/tank2.png",
+          src:
+            unit.action == 3
+              ? ""
+              : unit.action == 2
+              ? "https://bafybeieprtsdpqpueqmge4ivntsqj7may4ww4ql4ynh3muuyxreui3uck4.ipfs.nftstorage.link/tankBatlle.gif"
+              : unit.owner.toLowerCase() === address.toLowerCase()
+              ? "/tank1.png"
+              : "/tank2.png",
         };
       });
       setMatchUnits(normalizedUnits);
       setNormalized(true);
     };
-    player && normalized == false && getUnits();
-  }, [GAMEMASTER_READ, player]);
+    console.log("running");
+    player?.matchId && !normalized && getUnits();
+  }, [player]);
+
+  //lsiten for method on contract, rerender when event is fired
 
   async function setTarget(_unitId, _targetX, _targetY) {
     setCurrentTransaction(null);
