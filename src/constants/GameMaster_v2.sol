@@ -1,33 +1,33 @@
 // SPDX-License-Identifier: GPL-3.0
 
-pragma solidity 0.8.6;
+pragma solidity 0.8.17;
 
 contract GameElements {
     enum GameStatus {
-        none,
-        queued,
-        active,
-        ended
+        INACTIVE,
+        QUEUED,
+        ACTIVE,
+        ENDED
     }
 
     enum UnitTypes {
-        infantry,
-        tank,
-        drone
+        INFANTRY,
+        TANK,
+        DRONE
     }
 
     enum Rank {
-        none,
-        Sergeant,
-        Lieutenant,
-        Captain
+        NONE,
+        SERGEANT,
+        LIEUTENANT,
+        CAPTAIN
     }
 
-    enum ActionState {
-        idle,
-        moving,
-        combat,
-        regenerating
+    enum Action {
+        IDLE,
+        MOVING,
+        BATTLING,
+        DEAD
     }
 
     struct Match {
@@ -35,244 +35,370 @@ contract GameElements {
         Player playerA;
         Player playerB;
         GameStatus status;
-        uint256[11][11] gameGrid;
         uint256 winner;
-        uint256[] participatingUnits;
     }
 
     struct Unit {
         uint256 id;
         address owner;
         UnitTypes unitType;
-        ActionState currentAction;
+        Action action;
         uint256 hp;
         uint256 attack;
         uint256 armor;
-        uint256 count;
-        uint256 targetUnit;
-        uint256 x;
-        uint256 y;
+        uint256 currentX;
+        uint256 currentY;
+        uint256 targetX;
+        uint256 targetY;
         uint256 matchId;
+        uint256 enemyId;
     }
 
     struct Player {
         address owner;
         Rank rank;
-        uint256 unitCount;
-        uint256[] ownedUnitId;
+        uint256[3] unitIds;
+        uint256 matchId;
     }
 }
 
 contract GameMaster is GameElements {
-    uint256 public matchCount = 1;
-    uint256 public unitGlobalId = 1;
+    //  zero reserved
+    uint256 internal matchCount = 1;
+    uint256 internal unitGlobalId = 1;
+
     mapping(address => Player) public addressToPlayer;
-    mapping(uint256 => Match) public matchIdToMatch;
     mapping(uint256 => Unit) public unitIdToUnit;
+    mapping(uint256 => Match) public matchIdToMatch;
 
-    function createNewInitUnit() public returns (uint) {
-        Unit memory newUnit;
-        newUnit.id = unitGlobalId;
-        newUnit.owner = msg.sender;
-        newUnit.unitType = UnitTypes.infantry;
-        newUnit.currentAction = ActionState.idle;
+    ///////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////  Api Functions    //////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////
+    function getPlayerUnits(address _playerAddress)
+        public
+        view
+        returns (Unit[3] memory)
+    {
+        Unit[3] memory playerUnits;
+        //get Units from players unitIds
+        for (uint i = 0; i < 3; i++) {
+            playerUnits[i] = unitIdToUnit[
+                addressToPlayer[_playerAddress].unitIds[i]
+            ];
+        }
 
-        unitIdToUnit[unitGlobalId] = newUnit;
-        return unitGlobalId;
+        return playerUnits;
     }
 
-    function initPlayer() public returns (Player memory) {
+    function getMatchUnits(uint256 _matchId)
+        public
+        view
+        returns (Unit[6] memory)
+    {
         require(
-            addressToPlayer[msg.sender].rank == Rank.none,
+            matchIdToMatch[_matchId].status != GameStatus.INACTIVE,
+            "Invalid MatchId"
+        );
+
+        Match memory matchPointer = matchIdToMatch[_matchId];
+        address addressA = matchPointer.playerA.owner;
+        address addressB = matchPointer.playerB.owner;
+
+        Unit[6] memory matchUnits;
+        for (uint i = 0; i < 6; i++) {
+            if (i < 3) {
+                matchUnits[i] = unitIdToUnit[
+                    addressToPlayer[addressA].unitIds[i]
+                ];
+            } else {
+                matchUnits[i] = unitIdToUnit[
+                    addressToPlayer[addressB].unitIds[i - 3]
+                ];
+            }
+        }
+
+        return matchUnits;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////      Init Functions   /////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////
+    function initPlayer() private returns (Player memory) {
+        require(
+            addressToPlayer[msg.sender].owner != msg.sender,
             "Player already initialized."
         );
-        addressToPlayer[msg.sender].owner = msg.sender;
-        addressToPlayer[msg.sender].rank = Rank.Sergeant;
-        addressToPlayer[msg.sender].unitCount = 3;
 
-        addressToPlayer[msg.sender].ownedUnitId.push(createNewInitUnit());
+        uint256[3] memory newUnitIds;
+
+        Unit memory newUnitInfantry = Unit(
+            unitGlobalId,
+            msg.sender,
+            UnitTypes.INFANTRY,
+            Action.IDLE,
+            20,
+            1,
+            0,
+            0,
+            2,
+            0,
+            2,
+            0,
+            0
+        );
+        unitIdToUnit[unitGlobalId] = newUnitInfantry;
+        newUnitIds[0] = unitGlobalId;
         unitGlobalId++;
 
-        addressToPlayer[msg.sender].ownedUnitId.push(createNewInitUnit());
+        Unit memory newUnitTank = Unit(
+            unitGlobalId,
+            msg.sender,
+            UnitTypes.TANK,
+            Action.IDLE,
+            25,
+            2,
+            0,
+            0,
+            5,
+            0,
+            5,
+            0,
+            0
+        );
+        unitIdToUnit[unitGlobalId] = newUnitTank;
+        newUnitIds[1] = unitGlobalId;
         unitGlobalId++;
 
-        addressToPlayer[msg.sender].ownedUnitId.push(createNewInitUnit());
+        Unit memory newUnitDrone = Unit(
+            unitGlobalId,
+            msg.sender,
+            UnitTypes.DRONE,
+            Action.IDLE,
+            15,
+            3,
+            0,
+            0,
+            8,
+            0,
+            8,
+            0,
+            0
+        );
+        unitIdToUnit[unitGlobalId] = newUnitDrone;
+        newUnitIds[2] = unitGlobalId;
         unitGlobalId++;
+
+        Player memory newPlayer = Player(
+            msg.sender,
+            Rank.SERGEANT,
+            newUnitIds,
+            0
+        );
+
+        addressToPlayer[msg.sender] = newPlayer;
+
         return addressToPlayer[msg.sender];
     }
 
-    function newGame() public returns (uint256 matchId) {
-        // check whteher player who is starting the game has a player struct or not
-        if (addressToPlayer[msg.sender].rank != Rank.none) {
+    function createMatch() public returns (uint256) {
+        // check whteher player who is starting the game has a player or
+        if (addressToPlayer[msg.sender].rank == Rank.NONE) {
             // if not initialize the player
             initPlayer();
         }
         // get match id and increase the id
-        matchId = GameMaster.matchCount;
-        GameMaster.matchCount++;
+        Match memory newMatch;
+        newMatch.id = matchCount;
+        newMatch.status = GameStatus.QUEUED;
+        newMatch.playerA = addressToPlayer[msg.sender];
+        addressToPlayer[msg.sender].matchId = matchCount;
 
-        matchIdToMatch[matchId].id = matchId;
-        matchIdToMatch[matchId].status = GameStatus.queued;
-        matchIdToMatch[matchId].playerA = addressToPlayer[msg.sender];
-        // init the player army positon at 2 column differnce
-        // 1,2 2,4 and 1,6
-        matchIdToMatch[matchId].gameGrid[1][2] = addressToPlayer[msg.sender]
-            .ownedUnitId[0];
-        unitIdToUnit[addressToPlayer[msg.sender].ownedUnitId[0]].x = 1;
-        unitIdToUnit[addressToPlayer[msg.sender].ownedUnitId[0]].y = 2;
-        matchIdToMatch[matchId].participatingUnits.push(
-            addressToPlayer[msg.sender].ownedUnitId[0]
-        );
+        matchIdToMatch[matchCount] = newMatch;
 
-        matchIdToMatch[matchId].gameGrid[2][4] = addressToPlayer[msg.sender]
-            .ownedUnitId[1];
-        unitIdToUnit[addressToPlayer[msg.sender].ownedUnitId[1]].x = 2;
-        unitIdToUnit[addressToPlayer[msg.sender].ownedUnitId[1]].y = 4;
-        matchIdToMatch[matchId].participatingUnits.push(
-            addressToPlayer[msg.sender].ownedUnitId[1]
-        );
-
-        matchIdToMatch[matchId].gameGrid[1][6] = addressToPlayer[msg.sender]
-            .ownedUnitId[2];
-        unitIdToUnit[addressToPlayer[msg.sender].ownedUnitId[2]].x = 1;
-        unitIdToUnit[addressToPlayer[msg.sender].ownedUnitId[2]].y = 6;
-        matchIdToMatch[matchId].participatingUnits.push(
-            addressToPlayer[msg.sender].ownedUnitId[2]
-        );
-
-        return matchId;
+        matchCount++;
+        return newMatch.id;
     }
 
-    function joinGame(uint256 matchId) public returns (Match memory) {
-        if (addressToPlayer[msg.sender].rank == Rank.none) {
-            // the player trying to hjoin the game must have a player sttruct mapping
+    function joinMatch(uint256 _matchId) public returns (Match memory) {
+        require(
+            matchIdToMatch[_matchId].status == GameStatus.QUEUED,
+            "Invalid MatchId"
+        );
+        require(
+            matchIdToMatch[_matchId].playerA.owner != msg.sender,
+            "You can't battle yourself."
+        );
+
+        if (addressToPlayer[msg.sender].rank == Rank.NONE) {
+            // the player trying to join the game must have a player sttruct mapping
             initPlayer();
         }
-        matchIdToMatch[matchId].playerB = addressToPlayer[msg.sender];
+        matchIdToMatch[_matchId].playerB = addressToPlayer[msg.sender];
+        matchIdToMatch[_matchId].status = GameStatus.ACTIVE;
 
-        matchIdToMatch[matchId].gameGrid[10][2] = addressToPlayer[msg.sender]
-            .ownedUnitId[0];
-        unitIdToUnit[addressToPlayer[msg.sender].ownedUnitId[0]].x = 10;
-        unitIdToUnit[addressToPlayer[msg.sender].ownedUnitId[0]].y = 2;
-        matchIdToMatch[matchId].participatingUnits.push(
-            addressToPlayer[msg.sender].ownedUnitId[0]
-        );
-
-        matchIdToMatch[matchId].gameGrid[9][4] = addressToPlayer[msg.sender]
-            .ownedUnitId[1];
-        unitIdToUnit[addressToPlayer[msg.sender].ownedUnitId[1]].x = 9;
-        unitIdToUnit[addressToPlayer[msg.sender].ownedUnitId[1]].y = 4;
-        matchIdToMatch[matchId].participatingUnits.push(
-            addressToPlayer[msg.sender].ownedUnitId[1]
-        );
-
-        matchIdToMatch[matchId].gameGrid[10][6] = addressToPlayer[msg.sender]
-            .ownedUnitId[1];
-        unitIdToUnit[addressToPlayer[msg.sender].ownedUnitId[1]].x = 10;
-        unitIdToUnit[addressToPlayer[msg.sender].ownedUnitId[1]].y = 6;
-        matchIdToMatch[matchId].participatingUnits.push(
-            addressToPlayer[msg.sender].ownedUnitId[2]
-        );
-        return matchIdToMatch[matchId];
+        return matchIdToMatch[_matchId];
     }
 
-    function moveUnits(
-        uint256 matchId,
-        uint256 newX,
-        uint256 newY,
-        uint256 senderUnitsGlobalId,
-        uint256 oldX,
-        uint256 oldY
-    ) public returns (uint256[11][11] memory grid) {
-        // unitid at old position
-        uint256 unitIdAtOldPos = matchIdToMatch[matchId].gameGrid[oldX][oldY];
-        // troop id at new position
-        uint256 unitIdAtNewPos = matchIdToMatch[matchId].gameGrid[newX][newY];
+    ///////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////
+    /// GameOPs Functions
+    /////////////////////////////////    //////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////
 
-        // a x,y Position cant have multiple units for the same position
-        // a x,y Position must be 0/ empty for troops to move
-        // if not battle will happen between Player A and Player B
-        require(
-            msg.sender != unitIdToUnit[unitIdAtNewPos].owner ||
-                unitIdToUnit[unitIdAtNewPos].owner == address(0)
-        );
-
-        // at old position we must get back the unitGlobalId given as params
-        require(unitIdAtOldPos == senderUnitsGlobalId);
-
-        // txn generated from owner encrypter with prv and decrepted with pbk
-        // sender must participant of the match
-        require(
-            msg.sender == matchIdToMatch[matchId].playerA.owner ||
-                msg.sender == matchIdToMatch[matchId].playerB.owner
-        );
-
-        // is troop already at that position?.
-        if (unitIdAtNewPos == 0) {
-            // make old position empty
-            matchIdToMatch[matchId].gameGrid[oldX][oldY] = 0;
-            // move unit to new position
-            matchIdToMatch[matchId].gameGrid[newX][newY] = unitIdAtOldPos;
-        } else if (unitIdAtNewPos != 0) {
-            // troops exists on the new position
-
-            resolveBattle(matchId, newX, newY, oldX, oldY);
-        }
-
-        return matchIdToMatch[matchId].gameGrid;
-    }
-
-    // player B always wins
-    function resolveBattle(
-        uint256 matchId,
-        uint256 playerAPositionX,
-        uint256 playerAPositionY,
-        uint256 playerBPositionX,
-        uint256 playerBPositionY
+    function setUnitTarget(
+        uint256 _unitId,
+        uint256 _targetX,
+        uint256 _targetY
     ) public {
-        // UNit id at player a and player b position
-        uint256 playerAUnitId = matchIdToMatch[matchId].gameGrid[
-            playerAPositionX
-        ][playerAPositionY];
-        uint256 playerBUnitId = matchIdToMatch[matchId].gameGrid[
-            playerBPositionX
-        ][playerBPositionY];
+        require(
+            unitIdToUnit[_unitId].owner == msg.sender,
+            "You don't own this unit"
+        );
+        require(_targetX < 10 && _targetY < 10, "Grid is 10 x 10");
+        require(
+            !(_targetX == unitIdToUnit[_unitId].currentX &&
+                _targetY == unitIdToUnit[_unitId].currentY),
+            "Unit already in that position."
+        );
+        unitIdToUnit[_unitId].targetX = _targetX;
+        unitIdToUnit[_unitId].targetY = _targetY;
 
-        uint256 unitWeightA = getUnitWeight(playerAUnitId);
-        uint256 unitWeightB = getUnitWeight(playerBUnitId);
+        unitIdToUnit[_unitId].action = Action.MOVING;
+    }
 
-        if (unitWeightA > unitWeightB) {
-            // player A wins
-            // it holds its position
-            // mark unit of player B at  playerBPositionX and Y as regernerating
-            unitIdToUnit[playerBUnitId].currentAction = ActionState
-                .regenerating;
-            // remove that unit from grid
-            matchIdToMatch[matchId].gameGrid[playerBPositionX][
-                playerBPositionY
-            ] = 0;
-        } else {
-            // playerB or the owner who call the movement always  wins currently
-            // place player B unit at Player A position
-            matchIdToMatch[matchId].gameGrid[playerAPositionX][
-                playerAPositionY
-            ] = playerBUnitId;
-            matchIdToMatch[matchId].gameGrid[playerBPositionX][
-                playerBPositionY
-            ] = 0;
+    function renderStep(uint256 _matchId) public {
+        require(
+            matchIdToMatch[_matchId].status == GameStatus.ACTIVE,
+            "Game not Active"
+        );
+        Unit[6] memory matchUnits = getMatchUnits(_matchId);
+
+        //loop through each unit for movement if moving, advance 1 grid space
+        for (uint256 i = 0; i < 6; i++) {
+            if (matchUnits[i].action == Action.DEAD) continue;
+
+            if (matchUnits[i].action == Action.MOVING) {
+                //if x target is not reached advance one grid space closer to it
+                if (matchUnits[i].currentX != matchUnits[i].targetX) {
+                    if (matchUnits[i].currentX < matchUnits[i].targetX) {
+                        matchUnits[i].currentX++;
+                    } else {
+                        matchUnits[i].currentX--;
+                    }
+                    //if x target is reached check for y
+                } else if (matchUnits[i].currentY < matchUnits[i].targetY) {
+                    matchUnits[i].currentY++;
+                } else {
+                    matchUnits[i].currentY--;
+                }
+
+                //if unit has reached target set action to idle
+                if (
+                    matchUnits[i].currentX == matchUnits[i].targetX &&
+                    matchUnits[i].currentY == matchUnits[i].targetY
+                ) {
+                    matchUnits[i].action = Action.IDLE;
+                }
+            }
+            //check if there are any intersections, if so set to battling
+            for (uint256 j = 0; j < 6; j++) {
+                if (j == i) continue;
+                if (matchUnits[j].action == Action.DEAD) continue;
+
+                if (
+                    matchUnits[i].currentX == matchUnits[j].currentX &&
+                    matchUnits[i].currentY == matchUnits[j].currentY
+                ) {
+                    matchUnits[i].action = Action.BATTLING;
+                    matchUnits[j].action = Action.BATTLING;
+                }
+
+                //if battling, random chance to hit Unit.enemy
+                if (matchUnits[i].action == Action.BATTLING) {
+                    if (matchUnits[i].unitType == UnitTypes.INFANTRY) {
+                        if (matchUnits[j].unitType == UnitTypes.INFANTRY) {
+                            if (random(1) % 2 == 0) {
+                                matchUnits[j].hp -= matchUnits[i].attack;
+                            }
+                        } else if (matchUnits[j].unitType == UnitTypes.TANK) {
+                            if (random(5) % 2 == 0) {
+                                matchUnits[j].hp -= matchUnits[i].attack;
+                            }
+                        } else if (matchUnits[j].unitType == UnitTypes.DRONE) {
+                            if (random(3) % 2 == 0) {
+                                matchUnits[j].hp -= matchUnits[i].attack;
+                            }
+                        }
+                    } else if (matchUnits[i].unitType == UnitTypes.TANK) {
+                        if (matchUnits[j].unitType == UnitTypes.INFANTRY) {
+                            if (random(2) % 2 == 0) {
+                                matchUnits[j].hp -= matchUnits[i].attack;
+                            }
+                        } else if (matchUnits[j].unitType == UnitTypes.TANK) {
+                            if (random(6) % 2 == 0) {
+                                matchUnits[j].hp -= matchUnits[i].attack;
+                            }
+                        } else if (matchUnits[j].unitType == UnitTypes.DRONE) {
+                            if (random(7) % 2 == 0) {
+                                matchUnits[j].hp -= matchUnits[i].attack;
+                            }
+                        }
+                    } else if (matchUnits[i].unitType == UnitTypes.DRONE) {
+                        if (matchUnits[j].unitType == UnitTypes.INFANTRY) {
+                            if (random(3) % 2 == 0) {
+                                matchUnits[j].hp -= matchUnits[i].attack;
+                            }
+                        } else if (matchUnits[j].unitType == UnitTypes.TANK) {
+                            if (random(1) % 2 == 0) {
+                                matchUnits[j].hp -= matchUnits[i].attack;
+                            }
+                        } else if (matchUnits[j].unitType == UnitTypes.DRONE) {
+                            if (random(4) % 2 == 0) {
+                                matchUnits[j].hp -= matchUnits[i].attack;
+                            }
+                        }
+                    }
+                }
+
+                //if unit health is 10 or less (to avoid uint error) set action to dead
+                if (matchUnits[i].hp <= 10) {
+                    matchUnits[i].action = Action.DEAD;
+                }
+
+                if (matchUnits[j].hp <= 10) {
+                    matchUnits[j].action = Action.DEAD;
+                }
+            }
+        }
+
+        //check if all units are dead, if so set match status to ended
+        bool allDead = true;
+        for (uint256 i = 0; i < 6; i++) {
+            if (matchUnits[i].action != Action.DEAD) {
+                allDead = false;
+            }
+        }
+
+        if (allDead) {
+            matchIdToMatch[_matchId].status = GameStatus.ENDED;
+        }
+
+        //overwrite the units in the match with updated Units
+        for (uint256 i = 0; i < 6; i++) {
+            unitIdToUnit[matchUnits[i].id] = matchUnits[i];
         }
     }
 
-    function getUnitWeight(uint256 unitId) public view returns (uint256) {
+    function random(uint256 _randomInt) private view returns (uint256) {
         return
-            unitIdToUnit[unitId].hp +
-            unitIdToUnit[unitId].attack +
-            unitIdToUnit[unitId].armor +
-            unitIdToUnit[unitId].count;
+            uint256(
+                keccak256(
+                    abi.encodePacked(
+                        block.difficulty,
+                        block.timestamp,
+                        _randomInt
+                    )
+                )
+            );
     }
-
-    //     function render(uint256 matchId)
-    //         public
-    //         returns (uint256[11][11] memory v)
-    //     {}
 }
