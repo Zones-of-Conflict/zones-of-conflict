@@ -1,0 +1,45 @@
+{
+	"compiler": {
+		"version": "0.8.17+commit.8df45f5f"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"GameMaster.sol": "GameElements"
+		},
+		"evmVersion": "london",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": true,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"GameMaster.sol": {
+			"keccak256": "0x6891de642f20d80d1ac3b5fc5f285debed1fd9e559e4119827c8246e0d500789",
+			"license": "GPL-3.0",
+			"urls": [
+				"bzz-raw://29f31122c3cb084fa1ba8de6afaaaa0dda702fc9f33c1214fb0b3d543f0d0025",
+				"dweb:/ipfs/QmaeEsnzNMasBLWXF726387faamoabhZpw6mVbPhUuVPMN"
+			]
+		}
+	},
+	"version": 1
+}
