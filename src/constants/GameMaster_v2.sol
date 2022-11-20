@@ -75,6 +75,9 @@ contract GameMaster is GameElements {
     ///////////////////////////////////////////////////////////////////////////////
     //////////////////////////////  Api Functions    //////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////
+
+    event renderEvent(uint256 matchId, uint256 unitId, uint256 x, uint256 y);
+
     function getPlayerUnits(address _playerAddress)
         public
         view
@@ -349,10 +352,12 @@ contract GameMaster is GameElements {
                 //if unit health is 10 or less (to avoid uint error) set action to dead
                 if (matchUnits[i].hp <= 10) {
                     matchUnits[i].action = Action.DEAD;
+                    matchUnits[j].action = Action.IDLE;
                 }
 
                 if (matchUnits[j].hp <= 10) {
                     matchUnits[j].action = Action.DEAD;
+                    matchUnits[j].action = Action.IDLE;
                 }
             }
         }
