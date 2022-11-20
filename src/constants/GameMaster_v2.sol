@@ -399,8 +399,10 @@ contract GameMaster is GameElements {
         }
 
         //set both player matchids to 0
-        addressToPlayer[matchIdToMatch[_matchId].playerA.owner].matchId = 0;
-        addressToPlayer[matchIdToMatch[_matchId].playerB.owner].matchId = 0;
+        if (matchIdToMatch[_matchId].status == GameStatus.ENDED) {
+            addressToPlayer[matchIdToMatch[_matchId].playerA.owner].matchId = 0;
+            addressToPlayer[matchIdToMatch[_matchId].playerB.owner].matchId = 0;
+        }
 
         //overwrite the units in the match with updated Units
         for (uint256 i = 0; i < 6; i++) {
