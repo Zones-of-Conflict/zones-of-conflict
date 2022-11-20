@@ -1,16 +1,12 @@
 import { Box, Typography, Button } from "@mui/material";
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 // import CanvasImp from "../src/components/CanvasImp";
 
 import Navbar from "../src/components/Navbar";
 import CardPlayer from "../src/components/CardPlayer";
-import { formatUnits } from "ethers/lib/utils";
-import { MainContext } from "../src/contexts/MainContext";
 import { GAMEMASTER_DATA } from "../src/constants/contractData";
 import { useAccount, useContract, useProvider, useSigner } from "wagmi";
 import Donetsk from "../public/Donetsk.png";
-import { match } from "assert";
-import { Signer } from "ethers";
 
 const Canvas = () => {
   // no defination for setCoordinates found
@@ -26,6 +22,7 @@ const Canvas = () => {
   //contract instance for reading data
   const provider = useProvider();
   const { data: signer } = useSigner();
+  const [currentTransaction, setCurrentTransaction] = useState(null);
   const GAMEMASTER_READ = useContract({
     address: GAMEMASTER_DATA.testnetAddress,
     abi: GAMEMASTER_DATA.abi,
@@ -83,8 +80,7 @@ const Canvas = () => {
           targetY: Number(unit.targetY),
           matchId: Number(unit.matchId),
           enemyId: Number(unit.enemyId),
-          //src: match?.playerA.owner === address.toLowerCase() ? "/tank1.png" : "/tank2.png",
-          src: "/tank1.png",
+          src: unit.owner.toLowerCase() === address.toLowerCase() ? "/tank1.png" : "/tank2.png",
         };
       });
       setMatchUnits(normalizedUnits);
@@ -93,63 +89,14 @@ const Canvas = () => {
     player && normalized == false && getUnits();
   }, [GAMEMASTER_READ, player]);
 
-  const players = [
-    {
-      id: 1,
-      radius: 40,
-      src: "/player.png",
-      rank: "Sergeant",
-      units: [
-        {
-          unitId: 1,
-          unitType: "Infantry",
-          src: "/tank1.png",
-        },
-        {
-          unitId: 2,
-          unitType: "Tank",
-          src: "/tank1.png",
-        },
-        {
-          unitId: 3,
-          unitType: "Drone",
-          src: "/tank1.png",
-        },
-      ],
-    },
-    {
-      id: 2,
-      radius: 40,
-      src: "player1.png",
-      rank: "Sergeant",
-      units: [
-        {
-          unitId: 1,
-          unitType: "Infantry",
-          src: "/tank2.png",
-        },
-        {
-          unitId: 2,
-          unitType: "Tank",
-          src: "/tank2.png",
-        },
-        {
-          unitId: 3,
-          unitType: "Drone",
-          src: "/tank2.png",
-        },
-      ],
-    },
-  ];
-
   async function setTarget(_unitId, _targetX, _targetY) {
-    console.log("unitId", _unitId);
-    // await GAMEMASTER_WRITE?.setUnitTarget(
-
-    //   _unitId.toString(),
-    //   Math.floor(_targetX / 60).toString(),
-    //   Math.floor(_targetY / 60).toString()
-    // );
+    setCurrentTransaction(null);
+    const tx = await GAMEMASTER_WRITE?.setUnitTarget(
+      _unitId,
+      Math.floor(_targetX / 60),
+      Math.floor(_targetY / 60)
+    );
+    setCurrentTransaction(tx);
   }
 
   // grid of the canvas
@@ -208,6 +155,25 @@ const Canvas = () => {
       img.onload = () => {
         ctx.drawImage(img, unit.currentX * 60, unit.currentY * 60, 60, 60);
       };
+
+      // draw the target
+      if (unit.action === "Moving") {
+        const img = new Image();
+        img.src =
+          "https://bafybeiejn3q6pfzu6rmusiczugfxumsj7djlctq2md67wub64l2f264gwm.ipfs.nftstorage.link/target.png";
+        img.onload = () => {
+          ctx.drawImage(img, unit.targetX * 60 + 15, unit.targetY * 60 + 15, 30, 30);
+        };
+
+        // draw the dotted line between the unit and the target x then y straight
+        ctx.beginPath();
+        ctx.moveTo(unit.currentX * 60 + 30, unit.currentY * 60 + 30);
+        ctx.lineTo(unit.targetX * 60 + 30, unit.currentY * 60 + 30);
+        ctx.lineTo(unit.targetX * 60 + 30, unit.targetY * 60 + 30);
+        ctx.strokeStyle = "red";
+        ctx.setLineDash([5, 15]);
+        ctx.stroke();
+      }
     });
   };
 
@@ -218,7 +184,7 @@ const Canvas = () => {
     let y = unit.currentY * 60 + 30;
     ctx.arc(x, y, radius, 0, 2 * Math.PI);
     ctx.lineWidth = 4;
-    ctx.strokeStyle = "#003300";
+    ctx.strokeStyle = "green";
     ctx.closePath();
   };
   useEffect(() => {
@@ -239,6 +205,7 @@ const Canvas = () => {
 
     if (selectedItem) {
       drawCircle(ctx, selectedItem, 30, "green");
+      setCurrentTransaction(null);
       let x = selectedItem.currentX + 30;
       let y = selectedItem.currentY + 30;
       ctx.moveTo(x, y);
@@ -246,17 +213,25 @@ const Canvas = () => {
       ctx.closePath();
       ctx.stroke();
       //draw crosshair
+
+      ctx.setLineDash([]);
+      ctx.lineWidth = 1.5;
       ctx.beginPath();
-      ctx.moveTo(end.x, end.y - 15);
-      ctx.lineTo(end.x, end.y + 15);
-      ctx.moveTo(end.x - 15, end.y);
-      ctx.lineTo(end.x + 15, end.y);
+      ctx.moveTo(end.x, end.y - 7.5);
+      ctx.lineTo(end.x, end.y + 7.5);
+      ctx.moveTo(end.x - 7.5, end.y);
+      ctx.lineTo(end.x + 7.5, end.y);
       ctx.fillStyle = "#ffffff";
       if (!isIntersectPoint({ x: end.x, y: end.y }, selectedItem)) {
         ctx.fillText("Set target", end.x + 10, end.y - 10);
         ctx.strokeStyle = "red";
         ctx.closePath();
         ctx.stroke();
+
+        if (currentTransaction === null || currentTransaction?.status === "confirmed") {
+          setTarget(selectedItem.id, end.x, end.y);
+        }
+        setCurrentTransaction("pending...");
       }
 
       ctx.fillText(
@@ -274,7 +249,7 @@ const Canvas = () => {
         selectedItem.currentX * 60 + 50,
         selectedItem.currentY * 60 + 55
       );
-      setTarget(selectedItem.unitId, end.x, end.y);
+
       setIsDrawing(false);
     }
   }, [isDrawing, start, end, selectedItem, matchUnits]);
@@ -349,18 +324,8 @@ const Canvas = () => {
         </Button>
         <Box sx={{ display: "flex", flexDirection: "row" }}>
           <Box sx={{ display: "flex", flexDirection: "column", p: 4 }}>
-            <CardPlayer
-              id={players[0].id}
-              src={players[0].src}
-              rank={players[0].rank}
-              units={players[0].units}
-            />
+            <CardPlayer matchUnits={matchUnits} />
           </Box>
-          {/* <CanvasImp
-            onClick={handleCanvasClick}
-            coordinates={coordinates}
-            onMouseDown={mousedown}
-          /> */}
           <canvas
             ref={canvasRef}
             onMouseDown={mousedown as any}
@@ -380,12 +345,7 @@ const Canvas = () => {
             }}
           />
           <Box sx={{ display: "flex", flexDirection: "column", p: 4 }}>
-            <CardPlayer
-              id={players[1].id}
-              src={players[1].src}
-              rank={players[1].rank}
-              units={players[1].units}
-            />
+            <CardPlayer matchUnits={matchUnits} />
           </Box>
         </Box>
       </Box>
