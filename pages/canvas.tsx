@@ -277,7 +277,7 @@ const Canvas = () => {
         if (selectedItem && selectedItem.id == unit.id) {
           setSelectedItem(null);
         } else {
-          if (!selectedItem) {
+          if (!selectedItem && unit.owner == address) {
             setSelectedItem(unit);
             console.log("click on unit: ", unit);
           }
@@ -300,13 +300,13 @@ const Canvas = () => {
   // play sound
   const playSound = () => {
     let audio = new Audio("/start.mp3");
+    audio.volume = 0.05;
+    // toggle play/pause depending on current state
     if (isPlayingSound == false) {
-      console.log("play sound");
       audio.play();
       setIsPlayingSound(true);
     } else {
       audio.pause();
-      console.log("stop sound");
       setIsPlayingSound(false);
     }
   };
