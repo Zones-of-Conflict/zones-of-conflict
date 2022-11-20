@@ -7,270 +7,220 @@ import CardPlayer from "../src/components/CardPlayer";
 import { formatUnits } from "ethers/lib/utils";
 import { MainContext } from "../src/contexts/MainContext";
 import { GAMEMASTER_DATA } from "../src/constants/contractData";
-import { useContract, useProvider } from "wagmi";
-import Donetsk from "../src/assets/Donetsk.png";
-// use effect to get player info
-// when new player join call the same function
-// add the player 2 to array of player
-// will we have a name for each player or only his address
-
-// 2
-// function to getthe related unit for the player
-
-// 3. qestion
-// for the unit type will be different image for each type and for each player or only one image for each type
-
-const players = [
-  {
-    id: 1,
-    radius: 40,
-    src: "/player.png",
-    rank: "Sergeant",
-    units: [
-      {
-        unitId: 1,
-        unitType: "tank1",
-        unitPositionX: 200,
-        unitPositionY: 300,
-        src: "/tank1.png",
-      },
-      {
-        unitId: 2,
-        unitType: "tank2",
-        unitPositionX: 100,
-        unitPositionY: 300,
-        src: "/tank1.png",
-      },
-      {
-        unitId: 3,
-        unitType: "tank3",
-        unitPositionX: 300,
-        unitPositionY: 300,
-        src: "/tank1.png",
-      },
-    ],
-  },
-  {
-    id: 2,
-    radius: 40,
-    src: "player1.png",
-    rank: "Sergeant",
-    units: [
-      {
-        unitId: 1,
-        unitType: "tank1",
-        unitPositionX: 200,
-        unitPositionY: 300,
-        src: "/tank2.png",
-      },
-      {
-        unitId: 2,
-        unitType: "tank2",
-        unitPositionX: 100,
-        unitPositionY: 300,
-        src: "/tank2.png",
-      },
-      {
-        unitId: 3,
-        unitType: "tank3",
-        unitPositionX: 300,
-        unitPositionY: 300,
-        src: "/tank2.png",
-      },
-    ],
-  },
-];
-// another var to save only the units
-// check how to construct units
-// radius 1 rect equals to grid step '60'
-const units = [
-  {
-    unitId: 1,
-    unitType: "tank1",
-    unitPositionX: 240,
-    unitPositionY: 240,
-    src: "/tank1.png",
-    radius: 60,
-  },
-  {
-    unitId: 2,
-    unitType: "tank2",
-    unitPositionX: 30,
-    unitPositionY: 170,
-    src: "/tank1.png",
-    radius: 120,
-  },
-  {
-    unitId: 3,
-    unitType: "tank3",
-    unitPositionX: 300,
-    unitPositionY: 300,
-    src: "/tank1.png",
-    radius: 180,
-  },
-  {
-    unitId: 4,
-    unitType: "tank3",
-    unitPositionX: 600,
-    unitPositionY: 300,
-    src: "/tank2.png",
-    radius: 240,
-  },
-];
-
-// grid of the canvas
-const drawGrid = (ctx, xLength, xStep, yLength, yStep) => {
-  for (var x = 0.5; x <= xLength; x += xStep) {
-    ctx.moveTo(x, 0);
-    ctx.lineTo(x, xLength);
-  }
-  for (var y = 0.5; y <= yLength; y += yStep) {
-    ctx.moveTo(0, y);
-    ctx.lineTo(yLength, y);
-  }
-  ctx.strokeStyle = "grey";
-  ctx.stroke();
-};
-
-// draw the unit in the middle of the grid rect
-const placeAtGrid = (unit) => {
-  if (isUnitInGrid(unit)) {
-    let xGrid = Math.floor(unit.unitPositionX / 60);
-    let yGrid = Math.floor(unit.unitPositionY / 60);
-    if (xGrid > 9) xGrid = 9;
-    if (yGrid > 9) yGrid = 9;
-    unit.unitPositionX = xGrid * 60;
-    unit.unitPositionY = yGrid * 60;
-  }
-};
-
-// calcaulte the interval of the unit in the grid
-const calculateInterval = (counter, minimumCounter = 0, range = 60) => {
-  if (counter < minimumCounter) {
-    counter = Math.abs(counter);
-  }
-  const start = Math.floor(counter / range) * range + 1;
-  const end = start + range - 1;
-  const interval = `${Math.max(start, minimumCounter)}-${end}`;
-  return interval;
-};
-
-// check if 2 points have intersection or not
-// when mouse clicked on the canvas to determin the selected unit
-
-const isIntersectPoint = (point, unit) => {
-  let a = calculateInterval(point.x);
-  let c = calculateInterval(point.y);
-  let b = calculateInterval(unit.unitPositionX);
-  let d = calculateInterval(unit.unitPositionY);
-  const intersect = a.includes(b) && c.includes(d);
-  return a == b && c == d;
-};
-
-// draw rect with color
-// const drawRect = (ctx, leftX, topY, width, height, drawColor) => {
-//   ctx.fillStyle = drawColor;
-//   ctx.fillRect(leftX, topY, width, height);
-//   ctx.stroke();
-// };
-// function to draw the units
-const drawUnits = (ctx, units) => {
-  // draw the units
-  units.forEach((unit) => {
-    placeAtGrid(unit); // place the unit in the middle of the grid
-    const img = new Image();
-    img.src = unit.src;
-    img.onload = () => {
-      ctx.drawImage(img, unit.unitPositionX, unit.unitPositionY, 60, 60);
-    };
-  });
-};
-
-// function to draw the selected unit
-const drawSelectedUnit = (ctx, unit) => {
-  const img = new Image();
-  img.src = unit.src;
-  img.onload = () => {
-    ctx.drawImage(img, unit.unitPositionX, unit.unitPositionY, 60, 60);
-  };
-};
-
-// function to check if the unit is in the grid or not
-const isUnitInGrid = (unit) => {
-  return (
-    unit.unitPositionX >= 0 &&
-    unit.unitPositionX <= 600 &&
-    unit.unitPositionY >= 0 &&
-    unit.unitPositionY <= 600
-  );
-};
-
-// function to check if the unit is allowed to move to the new position or not
-const isUnitAllowedToMoveToNewPosition = (unit, newPosition) => {
-  let allowed = true;
-  let distance = Math.sqrt(
-    Math.pow(newPosition.x - unit.unitPositionX, 2) +
-      Math.pow(newPosition.y - unit.unitPositionY, 2)
-  );
-  if (distance > unit.radius) {
-    allowed = false;
-  }
-  return allowed;
-};
-
-// draw circle
-const drawCircle = (ctx, unit, radius, drawColor) => {
-  console.log("unit", unit.unitPositionX);
-  ctx.beginPath();
-  ctx.setLineDash([]);
-  let x = unit.unitPositionX + 30;
-  let y = unit.unitPositionY + 30;
-  ctx.arc(x, y, radius, 0, 2 * Math.PI);
-  ctx.lineWidth = 2;
-  ctx.strokeStyle = "#003300";
-  ctx.stroke();
-  ctx.closePath();
-};
+import { useAccount, useContract, useProvider, useSigner } from "wagmi";
+import Donetsk from "../public/Donetsk.png";
+import { match } from "assert";
+import { Signer } from "ethers";
 
 const Canvas = () => {
-  const [player, setPlayer] = useState(players[0]);
+  // no defination for setCoordinates found
   const [coordinates, setCoordinates] = useState({});
   const [selectedItem, setSelectedItem] = useState(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const [start, setStart] = useState({ x: 0, y: 0 });
   const [end, setEnd] = useState({ x: 0, y: 0 });
   // later use the player id to get the units
-  const [isMoving, setIsMoving] = useState(false);
   const canvasRef = useRef(null);
-  const [testUnit, setTestUnit] = useState();
   const [isPlayingSound, setIsPlayingSound] = useState(false);
+  const { address } = useAccount();
   //contract instance for reading data
   const provider = useProvider();
+  const { data: signer } = useSigner();
   const GAMEMASTER_READ = useContract({
     address: GAMEMASTER_DATA.testnetAddress,
     abi: GAMEMASTER_DATA.abi,
     signerOrProvider: provider,
   });
+  const GAMEMASTER_WRITE = useContract({
+    address: GAMEMASTER_DATA.testnetAddress,
+    abi: GAMEMASTER_DATA.abi,
+    signerOrProvider: signer,
+  });
 
+  const [player, setPlayer] = useState() as any;
+  const [matchUnits, setMatchUnits] = useState() as any;
+  const [normalized, setNormalized] = useState(false);
+  const [match, setMatch] = useState() as any;
+
+  // function setCoordinates({}) {}
+  // const setPlayer=() => { };
+
+  //getMatch
   useEffect(() => {
-    async function fetchTestunit() {
-      const unit = await GAMEMASTER_READ.testUnit();
-      setTestUnit(unit);
+    const getPlayer = async () => {
+      const playerFetch = await GAMEMASTER_READ?.addressToPlayer(address);
+      setPlayer(playerFetch);
+    };
+    GAMEMASTER_READ && address && getPlayer();
+
+    const getMatch = async () => {
+      const matchFetch = await GAMEMASTER_READ?.matchIdToMatch(player.matchId);
+      setMatch(matchFetch);
+    };
+    GAMEMASTER_READ && player && getMatch();
+
+    const getUnits = async () => {
+      const units = await GAMEMASTER_READ?.getMatchUnits(player?.matchId);
+      const normalizedUnits = units.map((unit) => {
+        return {
+          id: Number(unit.id),
+          owner: unit.owner,
+          unitType: unit.unitType == 0 ? "Infantry" : unit.unitType == 1 ? "Tank" : "Drone",
+          action:
+            unit.action == 0
+              ? "Idle"
+              : unit.action == 1
+              ? "Moving"
+              : unit.action == 2
+              ? "Battling"
+              : "Dead",
+          hp: Number(unit.hp),
+          attack: Number(unit.attack),
+          armor: Number(unit.armor),
+          currentX: Number(unit.currentX),
+          currentY: Number(unit.currentY),
+          targetX: Number(unit.targetX),
+          targetY: Number(unit.targetY),
+          matchId: Number(unit.matchId),
+          enemyId: Number(unit.enemyId),
+          //src: match?.playerA.owner === address.toLowerCase() ? "/tank1.png" : "/tank2.png",
+          src: "/tank1.png",
+        };
+      });
+      setMatchUnits(normalizedUnits);
+      setNormalized(true);
+    };
+    player && normalized == false && getUnits();
+  }, [GAMEMASTER_READ, player]);
+
+  const players = [
+    {
+      id: 1,
+      radius: 40,
+      src: "/player.png",
+      rank: "Sergeant",
+      units: [
+        {
+          unitId: 1,
+          unitType: "Infantry",
+          src: "/tank1.png",
+        },
+        {
+          unitId: 2,
+          unitType: "Tank",
+          src: "/tank1.png",
+        },
+        {
+          unitId: 3,
+          unitType: "Drone",
+          src: "/tank1.png",
+        },
+      ],
+    },
+    {
+      id: 2,
+      radius: 40,
+      src: "player1.png",
+      rank: "Sergeant",
+      units: [
+        {
+          unitId: 1,
+          unitType: "Infantry",
+          src: "/tank2.png",
+        },
+        {
+          unitId: 2,
+          unitType: "Tank",
+          src: "/tank2.png",
+        },
+        {
+          unitId: 3,
+          unitType: "Drone",
+          src: "/tank2.png",
+        },
+      ],
+    },
+  ];
+
+  async function setTarget(_unitId, _targetX, _targetY) {
+    console.log("unitId", _unitId);
+    // await GAMEMASTER_WRITE?.setUnitTarget(
+
+    //   _unitId.toString(),
+    //   Math.floor(_targetX / 60).toString(),
+    //   Math.floor(_targetY / 60).toString()
+    // );
+  }
+
+  // grid of the canvas
+  const drawGrid = (ctx, xLength, xStep, yLength, yStep) => {
+    for (var x = 0.5; x <= xLength; x += xStep) {
+      ctx.moveTo(x, 0);
+      ctx.lineTo(x, xLength);
     }
-    GAMEMASTER_READ && fetchTestunit();
-  }, [GAMEMASTER_READ]);
+    for (var y = 0.5; y <= yLength; y += yStep) {
+      ctx.moveTo(0, y);
+      ctx.lineTo(yLength, y);
+    }
+    ctx.strokeStyle = "grey";
+    ctx.stroke();
+  };
 
-  useEffect(() => {
-    console.log("testUnit", testUnit);
-    //  console.log("normnalized TargetX", Number(testUnit.targetX));
-  }, [testUnit]);
-  // useEffect(() => {
-  //   console.log("width: " + window.innerWidth);
-  //   console.log("height: " + window.innerHeight);
-  // }, []);
-  // draw effect – each time isDrawing,
-  // start or end change, automatically
-  // redraw everything
+  // draw the unit in the middle of the grid rect
+  const placeAtGrid = (unit) => {
+    let xGrid = Math.floor(unit.currentX * 60);
+    let yGrid = Math.floor(unit.currentY * 60);
+    // if (xGrid > 9) xGrid = 9;
+    // if (yGrid > 9) yGrid = 9;
+    // unit.currentX = unit.currentX * 60;
+    // unit.currentY = unit.currentY * 60;
+  };
+
+  // calcaulte the interval of the unit in the grid
+  const calculateInterval = (counter, minimumCounter = 0, range = 60) => {
+    if (counter < minimumCounter) {
+      counter = Math.abs(counter);
+    }
+    const start = Math.floor(counter / range) * range + 1;
+    const end = start + range - 1;
+    const interval = `${Math.max(start, minimumCounter)}-${end}`;
+    return interval;
+  };
+
+  // check if 2 points have intersection or not
+  // when mouse clicked on the canvas to determin the selected unit
+  const isIntersectPoint = (point, unit) => {
+    let a = calculateInterval(point.x);
+    let c = calculateInterval(point.y);
+    let b = calculateInterval(unit.currentX * 60);
+    let d = calculateInterval(unit.currentY * 60);
+    const intersect = a.includes(b) && c.includes(d);
+    return a == b && c == d;
+  };
+
+  // function to draw the units
+  const drawUnits = (ctx, matchUnits) => {
+    // draw the units
+    matchUnits?.forEach((unit) => {
+      placeAtGrid(unit); // place the unit in the middle of the grid
+      const img = new Image();
+      img.src = unit.src;
+      img.onload = () => {
+        ctx.drawImage(img, unit.currentX * 60, unit.currentY * 60, 60, 60);
+      };
+    });
+  };
+
+  // draw circle
+  const drawCircle = (ctx, unit, radius, drawColor) => {
+    ctx.beginPath();
+    let x = unit.currentX * 60 + 30;
+    let y = unit.currentY * 60 + 30;
+    ctx.arc(x, y, radius, 0, 2 * Math.PI);
+    ctx.lineWidth = 4;
+    ctx.strokeStyle = "#003300";
+    ctx.closePath();
+  };
   useEffect(() => {
     // clear canvas
     const canvas = canvasRef.current;
@@ -283,35 +233,51 @@ const Canvas = () => {
     const render = () => {
       // draw grid
       drawGrid(ctx, 600, 60, 600, 60);
-      //  drawRect(ctx, 100, 100, 50, 50, "red");
-      drawUnits(ctx, units);
+      drawUnits(ctx, matchUnits);
     };
     render();
-    // draw the line
-    ctx.beginPath();
-    ctx.setLineDash([5, 15]);
 
     if (selectedItem) {
-      drawCircle(ctx, selectedItem, 30, "red");
-      let x = selectedItem.unitPositionX + 30;
-      let y = selectedItem.unitPositionY + 30;
+      drawCircle(ctx, selectedItem, 30, "green");
+      let x = selectedItem.currentX + 30;
+      let y = selectedItem.currentY + 30;
       ctx.moveTo(x, y);
-      ctx.lineTo(end.x, end.y);
-      let isAllowed = isUnitAllowedToMoveToNewPosition(selectedItem, end);
-      console.log("isAllowed", isAllowed);
-      if (isAllowed) {
-        ctx.strokeStyle = "green";
-        ctx.closePath();
-        ctx.stroke();
-        moveUnitToNewPosition(ctx, selectedItem, end);
-        setIsDrawing(false);
-      } else {
+
+      ctx.closePath();
+      ctx.stroke();
+      //draw crosshair
+      ctx.beginPath();
+      ctx.moveTo(end.x, end.y - 15);
+      ctx.lineTo(end.x, end.y + 15);
+      ctx.moveTo(end.x - 15, end.y);
+      ctx.lineTo(end.x + 15, end.y);
+      ctx.fillStyle = "#ffffff";
+      if (!isIntersectPoint({ x: end.x, y: end.y }, selectedItem)) {
+        ctx.fillText("Set target", end.x + 10, end.y - 10);
         ctx.strokeStyle = "red";
         ctx.closePath();
         ctx.stroke();
       }
+
+      ctx.fillText(
+        "HP:" + selectedItem.hp,
+        selectedItem.currentX * 60 + 50,
+        selectedItem.currentY * 60 + 15
+      );
+      ctx.fillText(
+        "Attack:" + selectedItem.attack,
+        selectedItem.currentX * 60 + 50,
+        selectedItem.currentY * 60 + 35
+      );
+      ctx.fillText(
+        "Action:" + selectedItem.action,
+        selectedItem.currentX * 60 + 50,
+        selectedItem.currentY * 60 + 55
+      );
+      setTarget(selectedItem.unitId, end.x, end.y);
+      setIsDrawing(false);
     }
-  }, [isDrawing, start, end, selectedItem]);
+  }, [isDrawing, start, end, selectedItem, matchUnits]);
   function mousemove(e) {
     if (!isDrawing) return;
     setEnd({
@@ -323,30 +289,26 @@ const Canvas = () => {
     setIsDrawing(false);
   }
   const handleCanvasClick = (event) => {
-    console.log("canvas clicked");
     const currentCoord = {
       x: event.nativeEvent.offsetX, // event.clientX, //- event.target.offsetLeft,
       y: event.nativeEvent.offsetY, //event.clientY, // - event.target.offsetTop,
     };
     setCoordinates(currentCoord);
-    units.forEach((unit) => {
-      console.log("x", unit.unitPositionX);
-      console.log("y", event.target.offsetLeft);
+    matchUnits.forEach((unit) => {
       if (isIntersectPoint(currentCoord, unit)) {
         // alert("click on unit: " + unit.unitId);
-        console.log("click on unit: " + unit.unitId);
 
-        setSelectedItem(unit);
-        // TOASK: why is this not working? setSelected take time to fill the state
-        // I want to draw the circle only when the unit is selected
-        // drawCircle(ctx, unit, unit.radius, "red");
-
-        // draw the line
-        setStart({
-          x: unit.unitPositionX + 30,
-          y: unit.unitPositionY + 30,
-        });
-        //  drawCircle(canvasRef.current.getContext("2d"), selectedItem, 30, "red");
+        //if selectedItem.id == unit.id => set selectedItem = null
+        console.log("Selecteditem ID", selectedItem?.id);
+        console.log("Unit ID", unit.id);
+        if (selectedItem && selectedItem.id == unit.id) {
+          setSelectedItem(null);
+        } else {
+          if (!selectedItem) {
+            setSelectedItem(unit);
+            console.log("click on unit: ", unit);
+          }
+        }
       }
     });
   };
@@ -356,20 +318,12 @@ const Canvas = () => {
       x: e.nativeEvent.offsetX,
       y: e.nativeEvent.offsetY,
     });
-    console.log("start", start);
     setEnd({
       x: e.nativeEvent.offsetX,
       y: e.nativeEvent.offsetY,
     });
-    console.log("end", end);
   }
-  // function to move the unit to the new position
-  const moveUnitToNewPosition = (ctx, unit, newPosition) => {
-    unit.unitPositionX = newPosition.x;
-    unit.unitPositionY = newPosition.y;
-    placeAtGrid(unit);
-    drawSelectedUnit(ctx, unit);
-  };
+
   // play sound
   const playSound = () => {
     let audio = new Audio("/start.mp3");
@@ -409,7 +363,7 @@ const Canvas = () => {
           /> */}
           <canvas
             ref={canvasRef}
-            onMouseDown={mousedown}
+            onMouseDown={mousedown as any}
             onMouseMove={mousemove}
             onMouseUp={mouseup}
             onClick={handleCanvasClick}

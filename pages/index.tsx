@@ -5,7 +5,7 @@ import Navbar from "../src/components/Navbar";
 import Faucet from "../src/components/Faucet";
 import { GAMEMASTER_DATA } from "../src/constants/contractData";
 import { useProvider, useSigner, useContract } from "wagmi";
-import GameMenu from "../src/components/StartMenu";
+import GameMenu from "../src/components/GameMenu";
 import { MainContext } from "../src/contexts/MainContext";
 import Router from "next/router";
 
