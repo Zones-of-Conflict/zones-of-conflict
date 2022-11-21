@@ -8,77 +8,6 @@ import { GAMEMASTER_DATA } from "../src/constants/contractData";
 import { useAccount, useContract, useProvider, useSigner } from "wagmi";
 import Donetsk from "../public/Donetsk.png";
 
-const players = [
-  {
-    id: "A",
-    src: "/player.png",
-    rank: "Sergeant",
-    units: [
-      {
-        unitType: "Tank",
-      },
-      {
-        unitType: "Tank",
-      },
-      {
-        unitType: "Tank",
-      },
-    ],
-  },
-  {
-    id: "B",
-    radius: 40,
-    src: "player1.png",
-    rank: "Sergeant",
-    units: [
-      {
-        unitType: "Tank",
-      },
-      {
-        unitType: "Tank",
-      },
-      {
-        unitType: "Tank",
-      },
-    ],
-  },
-];
-
-const units = [
-  {
-    unitId: 1,
-    unitType: "tank1",
-    unitPositionX: 240,
-    unitPositionY: 240,
-    src: "/tank1.png",
-    radius: 60,
-  },
-  {
-    unitId: 2,
-    unitType: "tank2",
-    unitPositionX: 30,
-    unitPositionY: 170,
-    src: "/tank1.png",
-    radius: 120,
-  },
-  {
-    unitId: 3,
-    unitType: "tank3",
-    unitPositionX: 300,
-    unitPositionY: 300,
-    src: "/tank1.png",
-    radius: 180,
-  },
-  {
-    unitId: 4,
-    unitType: "tank3",
-    unitPositionX: 600,
-    unitPositionY: 300,
-    src: "/tank2.png",
-    radius: 240,
-  },
-];
-
 const Canvas = () => {
   // no defination for setCoordinates found
   const [coordinates, setCoordinates] = useState({});
@@ -295,6 +224,7 @@ const Canvas = () => {
     ctx.strokeStyle = "green";
     ctx.closePath();
   };
+
   useEffect(() => {
     // clear canvas
     const canvas = canvasRef.current;
