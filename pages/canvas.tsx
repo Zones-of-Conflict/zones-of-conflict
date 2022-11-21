@@ -135,7 +135,7 @@ const Canvas = () => {
     };
     console.log("running");
     player?.matchId && getUnits();
-  }, [player]);
+  }, [player, renderSwitch]);
 
   //subscribe to event "RenderStep" and toggle renderSwitch to re-render the canvas
   useEffect(() => {
@@ -158,7 +158,7 @@ const Canvas = () => {
 
   async function setTarget(_unitId, _targetX, _targetY) {
     setCurrentTransaction(null);
-    const tx = await GAMEMASTER_WRITE?.setUnitTarget(
+    const tx = GAMEMASTER_WRITE?.setUnitTarget(
       _unitId,
       Math.floor(_targetX / 60),
       Math.floor(_targetY / 60)
@@ -319,8 +319,8 @@ const Canvas = () => {
         }
         setCurrentTransaction("pending...");
 
-        //set selected unit to none
-        setSelectedItem(null);
+        // //set selected unit to none
+        // setSelectedItem(null);
       }
 
       setIsDrawing(false);

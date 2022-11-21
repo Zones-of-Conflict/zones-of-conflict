@@ -222,8 +222,6 @@ contract GameMaster is GameElements {
         matchIdToMatch[matchCount] = newMatch;
         addressToPlayer[msg.sender].matchId = matchCount;
 
-        matchCount++;
-
         // set alll of playerA units currentX to 0 and Current Y random number 0-9
         for (uint i = 0; i < 3; i++) {
             unitIdToUnit[addressToPlayer[msg.sender].unitIds[i]].currentX = 0;
@@ -234,8 +232,10 @@ contract GameMaster is GameElements {
             unitIdToUnit[addressToPlayer[msg.sender].unitIds[i]].action = Action
                 .IDLE;
             unitIdToUnit[addressToPlayer[msg.sender].unitIds[i]]
-                .matchId = newMatch.id;
+                .matchId = matchCount;
         }
+
+        matchCount++;
 
         return newMatch.id;
     }
