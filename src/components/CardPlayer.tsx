@@ -8,13 +8,14 @@ type CardProps = {
   units: UnitProps[];
 };
 type UnitProps = {
-  unitId: number;
+  id: string;
   unitType: string;
   src: string;
 };
 export default function CardPlayer({ id, units, src, rank }: CardProps) {
   return (
     <Card
+      key={id}
       sx={{
         width: 250,
         backgroundColor: "#fafafa",
@@ -31,7 +32,7 @@ export default function CardPlayer({ id, units, src, rank }: CardProps) {
           {rank}
         </Typography>
         {units.map((unit) => (
-          <Typography key={unit.unitId} color="textSecondary" variant="subtitle2" sx={{ mb: 1 }}>
+          <Typography key={unit.id} color="textSecondary" variant="subtitle2" sx={{ mb: 1 }}>
             {unit.unitType}
           </Typography>
         ))}

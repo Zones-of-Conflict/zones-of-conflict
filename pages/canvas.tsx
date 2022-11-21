@@ -15,12 +15,15 @@ const players = [
     rank: "Sergeant",
     units: [
       {
+        id: 1,
         unitType: "Tank",
       },
       {
+        id: 2,
         unitType: "Tank",
       },
       {
+        id: 3,
         unitType: "Tank",
       },
     ],
@@ -32,50 +35,18 @@ const players = [
     rank: "Sergeant",
     units: [
       {
+        id: 4,
         unitType: "Tank",
       },
       {
+        id: 5,
         unitType: "Tank",
       },
       {
+        id: 6,
         unitType: "Tank",
       },
     ],
-  },
-];
-
-const units = [
-  {
-    unitId: 1,
-    unitType: "tank1",
-    unitPositionX: 240,
-    unitPositionY: 240,
-    src: "/tank1.png",
-    radius: 60,
-  },
-  {
-    unitId: 2,
-    unitType: "tank2",
-    unitPositionX: 30,
-    unitPositionY: 170,
-    src: "/tank1.png",
-    radius: 120,
-  },
-  {
-    unitId: 3,
-    unitType: "tank3",
-    unitPositionX: 300,
-    unitPositionY: 300,
-    src: "/tank1.png",
-    radius: 180,
-  },
-  {
-    unitId: 4,
-    unitType: "tank3",
-    unitPositionX: 600,
-    unitPositionY: 300,
-    src: "/tank2.png",
-    radius: 240,
   },
 ];
 
@@ -427,10 +398,10 @@ const Canvas = () => {
         <Box sx={{ display: "flex", flexDirection: "row" }}>
           <Box sx={{ display: "flex", flexDirection: "column", p: 4 }}>
             <CardPlayer
-              id={players[0].id}
+              id={players[0].id as any}
               src={players[0].src}
               rank={players[0].rank}
-              units={players[0].units}
+              units={players[0].units as any}
             />
           </Box>
           <canvas
@@ -453,10 +424,10 @@ const Canvas = () => {
           />
           <Box sx={{ display: "flex", flexDirection: "column", p: 4 }}>
             <CardPlayer
-              id={players[1].id}
+              id={players[1].id as any}
               src={players[1].src}
               rank={players[1].rank}
-              units={players[1].units}
+              units={players[1].units as any}
             />
           </Box>
         </Box>
