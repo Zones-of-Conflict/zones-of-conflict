@@ -34,7 +34,7 @@ export default function Home() {
       if (result) {
         const { pathname } = Router;
         if (pathname == "/") {
-          Router.push("/canvas");
+          Router.push("/game");
           // next line to push to specific id when we get the id from matchFactory
           // Router.push("/canvas/?matchId=" + _matchId);
         }
@@ -51,7 +51,7 @@ export default function Home() {
       if (result) {
         const { pathname } = Router;
         if (pathname == "/") {
-          Router.push("/canvas");
+          Router.push("/game");
           // next line to push to specific id if it is exist
           // Router.push("/canvas/?matchId=" + _matchId);
         } else {
