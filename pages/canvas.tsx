@@ -132,7 +132,12 @@ const Canvas = () => {
         return {
           id: Number(unit.id),
           owner: unit.owner,
-          unitType: unit.unitType == 0 ? "Infantry" : unit.unitType == 1 ? "Tank" : "Drone",
+          unitType:
+            unit.unitType == 0
+              ? "Infantry"
+              : unit.unitType == 1
+              ? "Tank"
+              : "Drone",
           action:
             unit.action == 0
               ? "Idle"
@@ -258,7 +263,13 @@ const Canvas = () => {
         img.src =
           "https://bafybeiejn3q6pfzu6rmusiczugfxumsj7djlctq2md67wub64l2f264gwm.ipfs.nftstorage.link/target.png";
         img.onload = () => {
-          ctx.drawImage(img, unit.targetX * 60 + 15, unit.targetY * 60 + 15, 30, 30);
+          ctx.drawImage(
+            img,
+            unit.targetX * 60 + 15,
+            unit.targetY * 60 + 15,
+            30,
+            30
+          );
         };
 
         // draw the dotted line between the unit and the target x then y straight
@@ -343,7 +354,10 @@ const Canvas = () => {
         ctx.closePath();
         ctx.stroke();
 
-        if (currentTransaction === null || currentTransaction?.status === "confirmed") {
+        if (
+          currentTransaction === null ||
+          currentTransaction?.status === "confirmed"
+        ) {
           setTarget(selectedItem.id, end.x, end.y);
         }
         setCurrentTransaction("pending...");
@@ -415,10 +429,21 @@ const Canvas = () => {
     }
   };
   return (
-    <Box display={"flex"} flexDirection={"column"} bgcolor={"grey.100"} minHeight={"100vh"} gap={5}>
+    <Box
+      display={"flex"}
+      flexDirection={"column"}
+      bgcolor={"grey.100"}
+      minHeight={"100vh"}
+      gap={5}
+    >
       <Navbar />
 
-      <Box display={"flex"} flexDirection={"column"} alignItems={"center"} gap={4}>
+      <Box
+        display={"flex"}
+        flexDirection={"column"}
+        alignItems={"center"}
+        gap={4}
+      >
         <Typography variant="h1">Battle Map</Typography>
         <Button variant="contained" color="primary" onClick={playSound}>
           {" "}
@@ -427,10 +452,9 @@ const Canvas = () => {
         <Box sx={{ display: "flex", flexDirection: "row" }}>
           <Box sx={{ display: "flex", flexDirection: "column", p: 4 }}>
             <CardPlayer
-              id={players[0].id}
-              src={players[0].src}
-              rank={players[0].rank}
-              units={players[0].units}
+              units={matchUnits?.slice(0, 3)}
+              img="player.png"
+              id="Player 1"
             />
           </Box>
           <canvas
@@ -453,10 +477,9 @@ const Canvas = () => {
           />
           <Box sx={{ display: "flex", flexDirection: "column", p: 4 }}>
             <CardPlayer
-              id={players[1].id}
-              src={players[1].src}
-              rank={players[1].rank}
-              units={players[1].units}
+              units={matchUnits?.slice(3, 6)}
+              img="/player1.png"
+              id="Player 2"
             />
           </Box>
         </Box>
