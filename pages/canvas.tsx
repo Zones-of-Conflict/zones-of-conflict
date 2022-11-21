@@ -8,6 +8,77 @@ import { GAMEMASTER_DATA } from "../src/constants/contractData";
 import { useAccount, useContract, useProvider, useSigner } from "wagmi";
 import Donetsk from "../public/Donetsk.png";
 
+const players = [
+  {
+    id: "A",
+    src: "/player.png",
+    rank: "Sergeant",
+    units: [
+      {
+        unitType: "Tank",
+      },
+      {
+        unitType: "Tank",
+      },
+      {
+        unitType: "Tank",
+      },
+    ],
+  },
+  {
+    id: "B",
+    radius: 40,
+    src: "player1.png",
+    rank: "Sergeant",
+    units: [
+      {
+        unitType: "Tank",
+      },
+      {
+        unitType: "Tank",
+      },
+      {
+        unitType: "Tank",
+      },
+    ],
+  },
+];
+
+const units = [
+  {
+    unitId: 1,
+    unitType: "tank1",
+    unitPositionX: 240,
+    unitPositionY: 240,
+    src: "/tank1.png",
+    radius: 60,
+  },
+  {
+    unitId: 2,
+    unitType: "tank2",
+    unitPositionX: 30,
+    unitPositionY: 170,
+    src: "/tank1.png",
+    radius: 120,
+  },
+  {
+    unitId: 3,
+    unitType: "tank3",
+    unitPositionX: 300,
+    unitPositionY: 300,
+    src: "/tank1.png",
+    radius: 180,
+  },
+  {
+    unitId: 4,
+    unitType: "tank3",
+    unitPositionX: 600,
+    unitPositionY: 300,
+    src: "/tank2.png",
+    radius: 240,
+  },
+];
+
 const Canvas = () => {
   // no defination for setCoordinates found
   const [coordinates, setCoordinates] = useState({});
@@ -36,8 +107,8 @@ const Canvas = () => {
 
   const [player, setPlayer] = useState() as any;
   const [matchUnits, setMatchUnits] = useState() as any;
-  const [normalized, setNormalized] = useState(false);
   const [match, setMatch] = useState() as any;
+  const [renderSwitch, setRenderSwitch] = useState(false);
 
   //getMatch
   useEffect(() => {
@@ -52,7 +123,7 @@ const Canvas = () => {
       setMatch(matchFetch);
     };
     GAMEMASTER_READ && player && getMatch();
-  }, [GAMEMASTER_READ]);
+  }, [GAMEMASTER_READ, renderSwitch]);
 
   useEffect(() => {
     const getUnits = async () => {
@@ -90,13 +161,29 @@ const Canvas = () => {
         };
       });
       setMatchUnits(normalizedUnits);
-      setNormalized(true);
     };
     console.log("running");
-    player?.matchId && !normalized && getUnits();
+    player?.matchId && getUnits();
   }, [player]);
 
-  //lsiten for method on contract, rerender when event is fired
+  //subscribe to event "RenderStep" and toggle renderSwitch to re-render the canvas
+  useEffect(() => {
+    GAMEMASTER_READ?.on("RenderStep", (event) => {
+      //if the event is the current matchId, re-render the canvas
+      if (Number(event) === player?.matchId) {
+        setRenderSwitch(!renderSwitch);
+      }
+    });
+  }, [GAMEMASTER_READ]);
+  //subscribe to event "SetTarget" and toggle renderSwitch to re-render the canvas
+  useEffect(() => {
+    GAMEMASTER_READ?.on("SetTarget", (event) => {
+      //if the event is the current matchId, re-render the canvas
+      if (Number(event) === player?.matchId) {
+        setRenderSwitch(!renderSwitch);
+      }
+    });
+  }, [GAMEMASTER_READ]);
 
   async function setTarget(_unitId, _targetX, _targetY) {
     setCurrentTransaction(null);
@@ -188,6 +275,7 @@ const Canvas = () => {
 
   // draw circle
   const drawCircle = (ctx, unit, radius, drawColor) => {
+    ctx.setLineDash([]);
     ctx.beginPath();
     let x = unit.currentX * 60 + 30;
     let y = unit.currentY * 60 + 30;
@@ -232,17 +320,6 @@ const Canvas = () => {
       ctx.lineTo(end.x + 7.5, end.y);
       ctx.fillStyle = "#ffffff";
       placeAtGrid(end);
-      if (!isIntersectPoint({ x: end.x, y: end.y }, selectedItem)) {
-        ctx.fillText("Set target", end.x + 10, end.y - 10);
-        ctx.strokeStyle = "red";
-        ctx.closePath();
-        ctx.stroke();
-
-        if (currentTransaction === null || currentTransaction?.status === "confirmed") {
-          setTarget(selectedItem.id, end.x, end.y);
-        }
-        setCurrentTransaction("pending...");
-      }
 
       ctx.fillText(
         "HP:" + selectedItem.hp,
@@ -259,6 +336,21 @@ const Canvas = () => {
         selectedItem.currentX * 60 + 50,
         selectedItem.currentY * 60 + 55
       );
+
+      if (!isIntersectPoint({ x: end.x, y: end.y }, selectedItem)) {
+        ctx.fillText("Set target", end.x + 10, end.y - 10);
+        ctx.strokeStyle = "red";
+        ctx.closePath();
+        ctx.stroke();
+
+        if (currentTransaction === null || currentTransaction?.status === "confirmed") {
+          setTarget(selectedItem.id, end.x, end.y);
+        }
+        setCurrentTransaction("pending...");
+
+        //set selected unit to none
+        setSelectedItem(null);
+      }
 
       setIsDrawing(false);
     }
@@ -334,7 +426,12 @@ const Canvas = () => {
         </Button>
         <Box sx={{ display: "flex", flexDirection: "row" }}>
           <Box sx={{ display: "flex", flexDirection: "column", p: 4 }}>
-            {/* <CardPlayer matchUnits={matchUnits} /> */}
+            <CardPlayer
+              id={players[0].id}
+              src={players[0].src}
+              rank={players[0].rank}
+              units={players[0].units}
+            />
           </Box>
           <canvas
             ref={canvasRef}
@@ -355,7 +452,12 @@ const Canvas = () => {
             }}
           />
           <Box sx={{ display: "flex", flexDirection: "column", p: 4 }}>
-            {/* <CardPlayer matchUnits={matchUnits} /> */}
+            <CardPlayer
+              id={players[1].id}
+              src={players[1].src}
+              rank={players[1].rank}
+              units={players[1].units}
+            />
           </Box>
         </Box>
       </Box>

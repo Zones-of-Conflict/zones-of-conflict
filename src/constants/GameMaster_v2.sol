@@ -76,7 +76,8 @@ contract GameMaster is GameElements {
     //////////////////////////////  Api Functions    //////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////
 
-    event renderEvent(uint256 matchId, uint256 unitId, uint256 x, uint256 y);
+    event RenderStep(uint256 matchId);
+    event SetTarget(uint256 matchId);
 
     function getPlayerUnits(address _playerAddress)
         public
@@ -288,6 +289,8 @@ contract GameMaster is GameElements {
         unitIdToUnit[_unitId].targetY = _targetY;
 
         unitIdToUnit[_unitId].action = Action.MOVING;
+
+        emit SetTarget(unitIdToUnit[_unitId].matchId);
     }
 
     function renderStep(uint256 _matchId) public {
@@ -397,6 +400,8 @@ contract GameMaster is GameElements {
         for (uint256 i = 0; i < 6; i++) {
             unitIdToUnit[matchUnits[i].id] = matchUnits[i];
         }
+
+        emit RenderStep(_matchId);
     }
 
     //random number returning 0 or 1

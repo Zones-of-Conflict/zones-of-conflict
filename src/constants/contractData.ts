@@ -116,6 +116,32 @@ const GAMEMASTER_ABI = [
 		"type": "function"
 	},
 	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "matchId",
+				"type": "uint256"
+			}
+		],
+		"name": "RenderStep",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "matchId",
+				"type": "uint256"
+			}
+		],
+		"name": "SetTarget",
+		"type": "event"
+	},
+	{
 		"inputs": [
 			{
 				"internalType": "uint256",
@@ -506,7 +532,7 @@ const GAMEMASTER_ABI = [
 export type Contract = { address: string; abi: any; chainId: number };
 
 export const GAMEMASTER_DATA = {
-  testnetAddress: "0x69e9EFfc0c8351566b2FeBfA3acFc2bAC437439e",
+  testnetAddress: "0x42D442e627eA67699FA48Dc8ae24d9703956b3AB",
 
   abi: GAMEMASTER_ABI,
 };
