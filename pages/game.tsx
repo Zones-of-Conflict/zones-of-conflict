@@ -126,7 +126,7 @@ const Game = () => {
             unit.action == 3
               ? ""
               : unit.action == 2
-              ? "https://bafybeieprtsdpqpueqmge4ivntsqj7may4ww4ql4ynh3muuyxreui3uck4.ipfs.nftstorage.link/tankBatlle.gif"
+              ? "https://bafybeig772hfpp3vis7whhd2xqcjulolyncc7gickr7jrqkio7pw5io4ka.ipfs.nftstorage.link/battleTankss20.png"
               : unit.owner.toLowerCase() === address.toLowerCase()
               ? "/tank1.png"
               : "/tank2.png",
@@ -139,25 +139,24 @@ const Game = () => {
   }, [player, renderSwitch]);
 
   //subscribe to event "RenderStep" and toggle renderSwitch to re-render the canvas
-  useEffect(() => {
-    GAMEMASTER_READ?.on("RenderStep", (event) => {
-      //if the event is the current matchId, re-render the canvas
-      if (Number(event) === Number(player?.matchId)) {
-        setRenderSwitch(!renderSwitch);
-      }
-    });
-  }, [GAMEMASTER_READ]);
+
+  GAMEMASTER_READ?.on("RenderStep", (event) => {
+    //if the event is the current matchId, re-render the canvas
+    if (Number(event) === Number(player?.matchId)) {
+      setRenderSwitch(!renderSwitch);
+    }
+  });
+
   //subscribe to event "SetTarget" and toggle renderSwitch to re-render the canvas
-  useEffect(() => {
-    GAMEMASTER_READ?.on("SetTarget", (event) => {
-      console.log(event, player?.matchId);
-      //if the event is the current matchId, re-render the canvas
-      if (Number(event) === Number(player?.matchId)) {
-        console.log("should be rendering");
-        setRenderSwitch(!renderSwitch);
-      }
-    });
-  }, [GAMEMASTER_READ]);
+
+  GAMEMASTER_READ?.on("SetTarget", (event) => {
+    console.log(event, player?.matchId);
+    //if the event is the current matchId, re-render the canvas
+    if (Number(event) === Number(player?.matchId)) {
+      console.log("should be rendering");
+      setRenderSwitch(!renderSwitch);
+    }
+  });
 
   async function setTarget(_unitId, _targetX, _targetY) {
     setCurrentTransaction(null);
@@ -328,7 +327,8 @@ const Game = () => {
 
       setIsDrawing(false);
     }
-  }, [isDrawing, start, end, selectedItem, matchUnits]);
+  }, [isDrawing, selectedItem, end, matchUnits]);
+
   function mousemove(e) {
     if (!isDrawing) return;
     setEnd({
