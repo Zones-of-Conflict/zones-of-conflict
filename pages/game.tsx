@@ -50,7 +50,7 @@ const players = [
   },
 ];
 
-const Canvas = () => {
+const Game = () => {
   // no defination for setCoordinates found
   const [coordinates, setCoordinates] = useState({});
   const [selectedItem, setSelectedItem] = useState(null);
@@ -65,6 +65,7 @@ const Canvas = () => {
   const provider = useProvider();
   const { data: signer } = useSigner();
   const [currentTransaction, setCurrentTransaction] = useState(null);
+  const [audio, setAudio] = useState(null);
   const GAMEMASTER_READ = useContract({
     address: GAMEMASTER_DATA.testnetAddress,
     abi: GAMEMASTER_DATA.abi,
@@ -141,7 +142,7 @@ const Canvas = () => {
   useEffect(() => {
     GAMEMASTER_READ?.on("RenderStep", (event) => {
       //if the event is the current matchId, re-render the canvas
-      if (Number(event) === player?.matchId) {
+      if (Number(event) === Number(player?.matchId)) {
         setRenderSwitch(!renderSwitch);
       }
     });
@@ -149,8 +150,10 @@ const Canvas = () => {
   //subscribe to event "SetTarget" and toggle renderSwitch to re-render the canvas
   useEffect(() => {
     GAMEMASTER_READ?.on("SetTarget", (event) => {
+      console.log(event, player?.matchId);
       //if the event is the current matchId, re-render the canvas
-      if (Number(event) === player?.matchId) {
+      if (Number(event) === Number(player?.matchId)) {
+        console.log("should be rendering");
         setRenderSwitch(!renderSwitch);
       }
     });
@@ -319,8 +322,8 @@ const Canvas = () => {
         }
         setCurrentTransaction("pending...");
 
-        // //set selected unit to none
-        // setSelectedItem(null);
+        //set selected unit to none
+        setSelectedItem(null);
       }
 
       setIsDrawing(false);
@@ -373,11 +376,14 @@ const Canvas = () => {
   }
 
   // play sound
+  useEffect(() => {
+    setAudio(new Audio("/start.mp3"));
+  }, []);
+
   const playSound = () => {
-    let audio = new Audio("/start.mp3");
-    audio.volume = 0.05;
     // toggle play/pause depending on current state
     if (isPlayingSound == false) {
+      audio.volume = 0.5;
       audio.play();
       setIsPlayingSound(true);
     } else {
@@ -436,4 +442,4 @@ const Canvas = () => {
   );
 };
 
-export default Canvas;
+export default Game;
