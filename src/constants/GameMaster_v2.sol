@@ -230,6 +230,11 @@ contract GameMaster is GameElements {
             unitIdToUnit[addressToPlayer[msg.sender].unitIds[i]].currentY =
                 i *
                 3;
+            //set units to idle, set unit matchid to newMatch.id
+            unitIdToUnit[addressToPlayer[msg.sender].unitIds[i]].action = Action
+                .IDLE;
+            unitIdToUnit[addressToPlayer[msg.sender].unitIds[i]]
+                .matchId = newMatch.id;
         }
 
         return newMatch.id;
@@ -260,6 +265,11 @@ contract GameMaster is GameElements {
             unitIdToUnit[addressToPlayer[msg.sender].unitIds[i]].currentY =
                 i *
                 3;
+            //set units to idle, set unit matchid to newMatch.id
+            unitIdToUnit[addressToPlayer[msg.sender].unitIds[i]].action = Action
+                .IDLE;
+            unitIdToUnit[addressToPlayer[msg.sender].unitIds[i]]
+                .matchId = _matchId;
         }
         return matchIdToMatch[_matchId];
     }
