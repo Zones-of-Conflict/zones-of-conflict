@@ -227,7 +227,8 @@ contract GameMaster is GameElements {
             unitIdToUnit[addressToPlayer[msg.sender].unitIds[i]].currentX = 0;
             unitIdToUnit[addressToPlayer[msg.sender].unitIds[i]].currentY =
                 i *
-                3;
+                3 +
+                1;
             //set units to idle, set unit matchid to newMatch.id
             unitIdToUnit[addressToPlayer[msg.sender].unitIds[i]].action = Action
                 .IDLE;
@@ -259,12 +260,13 @@ contract GameMaster is GameElements {
         matchIdToMatch[_matchId].status = GameStatus.ACTIVE;
         addressToPlayer[msg.sender].matchId = _matchId;
 
-        // set alll of playerA units currentX to 9 and Current Y random number 0-9
+        // set all of playerA units currentX to 9 and Current Y random number 0-9
         for (uint i = 0; i < 3; i++) {
             unitIdToUnit[addressToPlayer[msg.sender].unitIds[i]].currentX = 9;
             unitIdToUnit[addressToPlayer[msg.sender].unitIds[i]].currentY =
                 i *
-                3;
+                3 +
+                1;
             //set units to idle, set unit matchid to newMatch.id
             unitIdToUnit[addressToPlayer[msg.sender].unitIds[i]].action = Action
                 .IDLE;
@@ -359,7 +361,8 @@ contract GameMaster is GameElements {
                     matchUnits[j].action == Action.BATTLING
                 ) {
                     matchUnits[i].hp -= matchUnits[j].attack * random();
-                    matchUnits[j].hp -= matchUnits[i].attack * random();
+                    if (matchUnits[i].hp > 10)
+                        matchUnits[j].hp -= matchUnits[i].attack * random();
                 }
 
                 //if unit health is 10 or less (to avoid uint error) set action to dead
