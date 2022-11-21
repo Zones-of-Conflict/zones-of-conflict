@@ -7,7 +7,7 @@ type CardProps = {
   units: UnitProps[];
 };
 type UnitProps = {
-  unitId: number;
+  id: string;
   unitType: string;
 };
 

@@ -23,6 +23,7 @@ const Canvas = () => {
   const provider = useProvider();
   const { data: signer } = useSigner();
   const [currentTransaction, setCurrentTransaction] = useState(null);
+  const [audio, setAudio] = useState(null);
   const GAMEMASTER_READ = useContract({
     address: GAMEMASTER_DATA.testnetAddress,
     abi: GAMEMASTER_DATA.abi,
@@ -88,7 +89,7 @@ const Canvas = () => {
             unit.action == 3
               ? ""
               : unit.action == 2
-              ? "https://bafybeieprtsdpqpueqmge4ivntsqj7may4ww4ql4ynh3muuyxreui3uck4.ipfs.nftstorage.link/tankBatlle.gif"
+              ? "https://bafybeig772hfpp3vis7whhd2xqcjulolyncc7gickr7jrqkio7pw5io4ka.ipfs.nftstorage.link/battleTankss20.png"
               : unit.owner.toLowerCase() === address.toLowerCase()
               ? "/tank1.png"
               : "/tank2.png",
@@ -98,30 +99,31 @@ const Canvas = () => {
     };
     console.log("running");
     player?.matchId && getUnits();
-  }, [player]);
+  }, [player, renderSwitch]);
 
   //subscribe to event "RenderStep" and toggle renderSwitch to re-render the canvas
-  useEffect(() => {
-    GAMEMASTER_READ?.on("RenderStep", (event) => {
-      //if the event is the current matchId, re-render the canvas
-      if (Number(event) === player?.matchId) {
-        setRenderSwitch(!renderSwitch);
-      }
-    });
-  }, [GAMEMASTER_READ]);
+
+  GAMEMASTER_READ?.on("RenderStep", (event) => {
+    //if the event is the current matchId, re-render the canvas
+    if (Number(event) === Number(player?.matchId)) {
+      setRenderSwitch(!renderSwitch);
+    }
+  });
+
   //subscribe to event "SetTarget" and toggle renderSwitch to re-render the canvas
-  useEffect(() => {
-    GAMEMASTER_READ?.on("SetTarget", (event) => {
-      //if the event is the current matchId, re-render the canvas
-      if (Number(event) === player?.matchId) {
-        setRenderSwitch(!renderSwitch);
-      }
-    });
-  }, [GAMEMASTER_READ]);
+
+  GAMEMASTER_READ?.on("SetTarget", (event) => {
+    console.log(event, player?.matchId);
+    //if the event is the current matchId, re-render the canvas
+    if (Number(event) === Number(player?.matchId)) {
+      console.log("should be rendering");
+      setRenderSwitch(!renderSwitch);
+    }
+  });
 
   async function setTarget(_unitId, _targetX, _targetY) {
     setCurrentTransaction(null);
-    const tx = await GAMEMASTER_WRITE?.setUnitTarget(
+    const tx = GAMEMASTER_WRITE?.setUnitTarget(
       _unitId,
       Math.floor(_targetX / 60),
       Math.floor(_targetY / 60)
@@ -298,7 +300,8 @@ const Canvas = () => {
 
       setIsDrawing(false);
     }
-  }, [isDrawing, start, end, selectedItem, matchUnits]);
+  }, [isDrawing, selectedItem, end, matchUnits]);
+
   function mousemove(e) {
     if (!isDrawing) return;
     setEnd({
@@ -346,11 +349,14 @@ const Canvas = () => {
   }
 
   // play sound
+  useEffect(() => {
+    setAudio(new Audio("/start.mp3"));
+  }, []);
+
   const playSound = () => {
-    let audio = new Audio("/start.mp3");
-    audio.volume = 0.05;
     // toggle play/pause depending on current state
     if (isPlayingSound == false) {
+      audio.volume = 0.5;
       audio.play();
       setIsPlayingSound(true);
     } else {

@@ -532,7 +532,7 @@ const GAMEMASTER_ABI = [
 export type Contract = { address: string; abi: any; chainId: number };
 
 export const GAMEMASTER_DATA = {
-  testnetAddress: "0x42D442e627eA67699FA48Dc8ae24d9703956b3AB",
+  testnetAddress: "0x6A90333b2A38F2311925629FA9f8a6B4B4074877",
 
   abi: GAMEMASTER_ABI,
 };
